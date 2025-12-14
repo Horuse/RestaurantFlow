@@ -24,10 +24,11 @@ public class InventoryRepository : Repository<Ingredient>, IInventoryRepository
 
     public async Task<List<Ingredient>> GetLowStockIngredientsAsync()
     {
-        return await _dbSet
+        var ingredients = await _dbSet
             .Where(i => i.IsActive && i.CurrentStock <= i.MinimumStock)
-            .OrderBy(i => i.CurrentStock)
             .ToListAsync();
+        
+        return ingredients.OrderBy(i => i.CurrentStock).ToList();
     }
 
     public async Task<Ingredient> UpdateIngredientStockAsync(int ingredientId, decimal quantity, string reason)
