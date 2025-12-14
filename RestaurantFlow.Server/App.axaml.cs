@@ -12,6 +12,7 @@ using ReactiveUI;
 using RestaurantFlow.Data;
 using RestaurantFlow.Server.ViewModels;
 using RestaurantFlow.Server.Views;
+using RestaurantFlow.Server.Extensions;
 using ShadUI;
 using Splat;
 
@@ -56,26 +57,36 @@ public partial class App : Application
     {
         services.AddDbContext<RestaurantDbContext>(options =>
             options.UseSqlite("Data Source=restaurant.db"));
-
-        // TODO: Add repositories and services here
+        
+        services.AddScoped<RestaurantFlow.Server.Services.IOrderService, RestaurantFlow.Server.Services.OrderService>();
+        services.AddScoped<RestaurantFlow.Server.Services.IMenuService, RestaurantFlow.Server.Services.MenuService>();
+        services.AddScoped<RestaurantFlow.Server.Services.IInventoryService, RestaurantFlow.Server.Services.InventoryService>();
+        services.AddScoped<RestaurantFlow.Server.Services.IStaffService, RestaurantFlow.Server.Services.StaffService>();
         
         services.AddTransient<MainWindowViewModel>();
+        services.AddTransient<KitchenViewModel>();
+        services.AddTransient<CounterViewModel>();
+        services.AddTransient<MenuViewModel>();
+        services.AddTransient<InventoryViewModel>();
+        services.AddTransient<AnalyticsViewModel>();
+        
+        services.AddTransient<ViewModels.Menu.AddMenuItemViewModel>();
         
         services.AddSingleton<DialogManager>();
         services.AddSingleton<ToastManager>();
         
         services.AddTransient<IServiceProvider>(sp => sp);
         
-        // Initialize database with migrations
         using var scope = services.BuildServiceProvider().CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<RestaurantDbContext>();
         context.Database.Migrate();
+        context.SeedData();
     }
 
     private void RegisterDialogs(IServiceProvider serviceProvider)
     {
         var dialogManager = serviceProvider.GetRequiredService<DialogManager>();
-        // TODO: Register dialogs here when they are created
+        dialogManager.Register<Views.Menu.AddMenuItemDialog, ViewModels.Menu.AddMenuItemViewModel>();
     }
 
     private void DisableAvaloniaDataAnnotationValidation()

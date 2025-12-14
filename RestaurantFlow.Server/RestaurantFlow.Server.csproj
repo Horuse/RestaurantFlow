@@ -41,4 +41,8 @@
       <ProjectReference Include="..\RestaurantFlow.Shared\RestaurantFlow.Shared.csproj" />
       <ProjectReference Include="..\RestaurantFlow.Data\RestaurantFlow.Data.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <None Include="Styles\Index.axaml" />
+    </ItemGroup>
 </Project>

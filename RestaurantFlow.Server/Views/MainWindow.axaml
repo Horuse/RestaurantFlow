@@ -1,20 +1,189 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:RestaurantFlow.Server.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="RestaurantFlow.Server.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="RestaurantFlow.Server">
+<shadui:Window xmlns="https://github.com/avaloniaui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               xmlns:vm="using:RestaurantFlow.Server.ViewModels"
+               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+               xmlns:shadui="clr-namespace:ShadUI;assembly=ShadUI"
+               xmlns:converters="using:RestaurantFlow.Server.Converters"
+               xmlns:views="clr-namespace:RestaurantFlow.Server.Views"
+               mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+               x:Class="RestaurantFlow.Server.Views.MainWindow"
+               x:DataType="vm:MainWindowViewModel"
+               Icon="/Assets/avalonia-logo.ico"
+               Title="RestaurantFlow - Управління рестораном"
+               Width="1200" Height="800">
+
+    <shadui:Window.Hosts>
+        <shadui:DialogHost 
+            Manager="{Binding DialogManager}"
+            Owner="{Binding RelativeSource={RelativeSource AncestorType=shadui:Window}}"/>
+        <shadui:ToastHost Manager="{Binding ToastManager}" />
+    </shadui:Window.Hosts>
+
+    <shadui:Window.Resources>
+        <converters:StringEqualsConverter x:Key="StringEquals"/>
+        <converters:StringNotEqualsConverter x:Key="StringNotEquals"/>
+    </shadui:Window.Resources>
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <Grid ColumnDefinitions="280,*">
+        <shadui:Sidebar 
+            Grid.Column="0"
+            Background="{DynamicResource CardBackgroundColor}"
+            BorderThickness="0,0,1,0"
+            BorderBrush="{DynamicResource BorderColor}"
+            Padding="16"
+            MinWidth="280"
+            Expanded="True">
+            
+            <shadui:Sidebar.Header>
+                <StackPanel Spacing="16">
+                    <Border 
+                        Background="#e63946" 
+                        CornerRadius="8" 
+                        Padding="16,12"
+                        HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Border
+                                Background="White"
+                                CornerRadius="6"
+                                Width="32"
+                                Height="32"
+                                VerticalAlignment="Center">
+                                <TextBlock 
+                                    Classes="LucideIcon"
+                                    Text="🍟"
+                                    FontSize="16"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock 
+                                    Text="RestaurantFlow"
+                                    FontSize="16"
+                                    FontWeight="Bold"
+                                    Foreground="White"/>
+                                <TextBlock 
+                                    Text="Управління рестораном"
+                                    FontSize="12"
+                                    Foreground="White"
+                                    Opacity="0.8"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </shadui:Sidebar.Header>
 
-</Window>
+            <StackPanel Spacing="8">
+                <TextBlock 
+                    Classes="Caption Muted"
+                    FontWeight="DemiBold"
+                    Margin="16,16,8,8"
+                    Text="НАВІГАЦІЯ"/>
+                
+                <shadui:SidebarItem 
+                    Content="Кухня"
+                    Command="{Binding NavigateToCommand}"
+                    CommandParameter="Kitchen">
+                    <shadui:SidebarItem.Icon>
+                        <TextBlock 
+                            Classes="LucideIcon"
+                            Text="👨‍🍳"
+                            FontSize="16"/>
+                    </shadui:SidebarItem.Icon>
+                </shadui:SidebarItem>
+
+                <shadui:SidebarItem 
+                    Content="Касса"
+                    Command="{Binding NavigateToCommand}"
+                    CommandParameter="Counter">
+                    <shadui:SidebarItem.Icon>
+                        <TextBlock 
+                            Classes="LucideIcon"
+                            Text="🔔"
+                            FontSize="16"/>
+                    </shadui:SidebarItem.Icon>
+                </shadui:SidebarItem>
+
+                <shadui:SidebarItem 
+                    Content="Меню"
+                    Command="{Binding NavigateToCommand}"
+                    CommandParameter="Menu">
+                    <shadui:SidebarItem.Icon>
+                        <TextBlock 
+                            Classes="LucideIcon"
+                            Text="📋"
+                            FontSize="16"/>
+                    </shadui:SidebarItem.Icon>
+                </shadui:SidebarItem>
+
+                <shadui:SidebarItem 
+                    Content="Склад"
+                    Command="{Binding NavigateToCommand}"
+                    CommandParameter="Inventory">
+                    <shadui:SidebarItem.Icon>
+                        <TextBlock 
+                            Classes="LucideIcon"
+                            Text="📦"
+                            FontSize="16"/>
+                    </shadui:SidebarItem.Icon>
+                </shadui:SidebarItem>
+
+                <shadui:SidebarItem 
+                    Content="Аналітика"
+                    Command="{Binding NavigateToCommand}"
+                    CommandParameter="Analytics">
+                    <shadui:SidebarItem.Icon>
+                        <TextBlock 
+                            Classes="LucideIcon"
+                            Text="📊"
+                            FontSize="16"/>
+                    </shadui:SidebarItem.Icon>
+                </shadui:SidebarItem>
+            </StackPanel>
+        </shadui:Sidebar>
+
+        
+        <DockPanel Grid.Column="1">
+            <Border 
+                DockPanel.Dock="Top"
+                Background="{DynamicResource CardBackgroundColor}"
+                BorderThickness="0,0,0,1"
+                BorderBrush="{DynamicResource BorderColor}"
+                Padding="24,16">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock 
+                        Text="{Binding SelectedView}"
+                        FontSize="24"
+                        FontWeight="Bold"
+                        Classes="h2"/>
+                    <TextBlock 
+                        Text="Ефективно керуйте своїм рестораном"
+                        Classes="Small Muted"
+                        Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Panel Margin="24">
+                <views:KitchenView IsVisible="{Binding $parent[Panel].DataContext.SelectedView, Converter={StaticResource StringEquals}, ConverterParameter=Kitchen}"
+                             DataContext="{Binding KitchenViewModel}"/>
+
+                <views:CounterView IsVisible="{Binding $parent[Panel].DataContext.SelectedView, Converter={StaticResource StringEquals}, ConverterParameter=Counter}"
+                             DataContext="{Binding CounterViewModel}"/>
+
+                <views:MenuView IsVisible="{Binding $parent[Panel].DataContext.SelectedView, Converter={StaticResource StringEquals}, ConverterParameter=Menu}"
+                          DataContext="{Binding MenuViewModel}"/>
+
+                <views:InventoryView IsVisible="{Binding $parent[Panel].DataContext.SelectedView, Converter={StaticResource StringEquals}, ConverterParameter=Inventory}"
+                               DataContext="{Binding InventoryViewModel}"/>
+                
+                <views:AnalyticsView IsVisible="{Binding $parent[Panel].DataContext.SelectedView, Converter={StaticResource StringEquals}, ConverterParameter=Analytics}"
+                               DataContext="{Binding AnalyticsViewModel}"/>
+            </Panel>
+        </DockPanel>
+    </Grid>
+
+</shadui:Window>

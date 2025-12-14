@@ -2,14 +2,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="RestaurantFlow.Server.App"
              xmlns:local="using:RestaurantFlow.Server"
+             xmlns:shadUi="clr-namespace:ShadUI;assembly=ShadUI"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
+             
+     <Application.Resources>
+         <FontFamily x:Key="LucideIcon">avares://RestaurantFlow.Server/Assets/Fonts#lucide</FontFamily>
+     </Application.Resources>
+    
   
     <Application.Styles>
-        <FluentTheme />
+        <shadUi:ShadTheme />
+        <StyleInclude Source="avares://RestaurantFlow.Server/Styles/Index.axaml" />
     </Application.Styles>
 </Application>

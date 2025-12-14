@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RestaurantFlow.Server.ViewModels"
+             x:Class="RestaurantFlow.Server.Views.AnalyticsView"
+             x:DataType="vm:AnalyticsViewModel">
+
+    <Grid>
+        <Border Background="White" CornerRadius="10" Margin="20" Padding="30">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="📊" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                <TextBlock Text="Аналітика продажів" 
+                          FontSize="24" 
+                          FontWeight="Bold" 
+                          HorizontalAlignment="Center"
+                          Margin="0,0,0,10"/>
+                <TextBlock Text="Звіти та статистика ресторану" 
+                          FontSize="16" 
+                          Foreground="#666666"
+                          HorizontalAlignment="Center"/>
+                <Button Content="🔄 Оновити дані"
+                       Command="{Binding RefreshAnalyticsCommand}"
+                       Classes="btn btn-primary"
+                       HorizontalAlignment="Center"
+                       Margin="0,20,0,0"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

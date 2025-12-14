@@ -1,0 +1,160 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RestaurantFlow.Server.ViewModels"
+             xmlns:models="using:RestaurantFlow.Server.Models"
+             xmlns:shadui="clr-namespace:ShadUI;assembly=ShadUI"
+             x:Class="RestaurantFlow.Server.Views.CounterView"
+             x:DataType="vm:CounterViewModel">
+
+    <StackPanel Spacing="24">
+        <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16">
+                <Button Classes="Secondary" 
+                        Content="Оновити"
+                        Command="{Binding RefreshOrdersCommand}">
+                    <shadui:ButtonAssist.Icon>
+                        <TextBlock Classes="LucideIcon" Text="&#57732;" Margin="0,0,6,0" />
+                    </shadui:ButtonAssist.Icon>
+                </Button>
+            </StackPanel>
+        </Grid>
+        
+        <Grid ColumnDefinitions="2*,*" ColumnSpacing="20">
+            
+            <shadui:Card Grid.Column="0" HasShadow="True">
+                <Grid RowDefinitions="Auto,*">
+                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,15">
+                        <TextBlock Grid.Column="0" Text="🔔 Готові до видачі" FontSize="18" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="1" Text="{Binding ReadyOrders.Count, StringFormat='{}{0} замовлень'}" 
+                                  FontSize="14" Foreground="#666666"/>
+                    </Grid>
+                    
+   
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding ReadyOrders}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="2"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="models:OrderCardViewModel">
+                                    <Border Background="#d4edda" 
+                                           CornerRadius="8" 
+                                           Padding="15" 
+                                           Margin="5"
+                                           BorderBrush="#28a745" 
+                                           BorderThickness="2">
+                                        <Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
+                              
+                                            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+                                                <TextBlock Grid.Column="0" Text="{Binding OrderNumber}" 
+                                                          FontSize="18" FontWeight="Bold" Foreground="#155724"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding TableInfo}" 
+                                                          FontSize="12" FontWeight="Medium" Foreground="#155724"/>
+                                            </Grid>
+                                            
+                                          
+                                            <TextBlock Grid.Row="1" Text="{Binding ItemsDescription}" 
+                                                      FontSize="14" Foreground="#155724" 
+                                                      TextWrapping="Wrap" Margin="0,0,0,10"/>
+                                            
+                             
+                                            <StackPanel Grid.Row="2" Margin="0,0,0,10">
+                                                <TextBlock Text="{Binding CreatedTime}" FontSize="12" Foreground="#6c757d"/>
+                                                <TextBlock Text="{Binding ReadyTime}" FontSize="12" Foreground="#28a745" FontWeight="Medium"/>
+                                            </StackPanel>
+                                            
+                                        
+                                            <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Stretch">
+                                                <Button Content="📞 Виклик клієнта" 
+                                                       Command="{Binding $parent[UserControl].((vm:CounterViewModel)DataContext).CallCustomerCommand}" 
+                                                       CommandParameter="{Binding}"
+                                                       Classes="btn btn-warning"
+                                                       HorizontalAlignment="Stretch"
+                                                       HorizontalContentAlignment="Center"/>
+                                                <Button Content="✅ Видано" 
+                                                       Command="{Binding $parent[UserControl].((vm:CounterViewModel)DataContext).CompleteOrderCommand}" 
+                                                       CommandParameter="{Binding}"
+                                                       Classes="btn btn-success"
+                                                       HorizontalAlignment="Stretch"
+                                                       HorizontalContentAlignment="Center"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </shadui:Card>
+
+ 
+            <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="20" BorderBrush="#E0E0E0" BorderThickness="1">
+                <Grid RowDefinitions="Auto,*">
+                    <TextBlock Grid.Row="0" Text="📋 Останні видані" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,15"/>
+                    
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding CompletedOrders}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="models:OrderCardViewModel">
+                                    <Border Background="#f8f9fa" 
+                                           CornerRadius="6" 
+                                           Padding="12" 
+                                           Margin="0,0,0,8"
+                                           BorderBrush="#dee2e6" 
+                                           BorderThickness="1">
+                                        <Grid RowDefinitions="Auto,Auto,Auto">
+                                            <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                                                <TextBlock Grid.Column="0" Text="{Binding OrderNumber}" 
+                                                          FontSize="14" FontWeight="SemiBold"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding TableInfo}" 
+                                                          FontSize="12" Foreground="#6c757d"/>
+                                            </Grid>
+                                            <TextBlock Grid.Row="1" Text="{Binding ItemsDescription}" 
+                                                      FontSize="12" Foreground="#6c757d" 
+                                                      TextWrapping="Wrap" Margin="0,5,0,5"/>
+                                            <TextBlock Grid.Row="2" Text="{Binding ReadyTime}" 
+                                                      FontSize="11" Foreground="#28a745"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+
+
+        <Border Background="White" 
+               CornerRadius="10" 
+               Padding="30"
+               IsVisible="{Binding !ReadyOrders.Count}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="🎉" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                <TextBlock Text="Немає готових замовлень" 
+                          FontSize="24" 
+                          FontWeight="Bold" 
+                          HorizontalAlignment="Center"
+                          Margin="0,0,0,10"/>
+                <TextBlock Text="Усі замовлення видано або ще готуються" 
+                          FontSize="16" 
+                          Foreground="#666666"
+                          HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+        
+        <Border Background="#80000000" 
+               IsVisible="{Binding IsLoading}"
+               IsHitTestVisible="True">
+            <Border HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" 
+                   CornerRadius="10" Padding="30">
+                <StackPanel>
+                    <TextBlock Text="⏳" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <TextBlock Text="Завантаження замовлень..." FontSize="16" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </Border>
+    </StackPanel>
+</UserControl>

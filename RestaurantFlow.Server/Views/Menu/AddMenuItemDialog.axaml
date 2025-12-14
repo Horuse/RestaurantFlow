@@ -1,0 +1,110 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:RestaurantFlow.Server.ViewModels.Menu"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="700"
+             x:Class="RestaurantFlow.Server.Views.Menu.AddMenuItemDialog"
+             x:DataType="vm:AddMenuItemViewModel">
+
+    <StackPanel Spacing="24" Margin="24">
+        <StackPanel Spacing="8">
+            <TextBlock Text="{Binding Title}" FontSize="18" FontWeight="Bold" />
+            <TextBlock Text="Заповніть дані страви" FontSize="12" Foreground="#666666" />
+        </StackPanel>
+
+        <StackPanel Spacing="16">
+            <Grid ColumnDefinitions="* *" ColumnSpacing="16">
+                <StackPanel Grid.Column="0" Spacing="8">
+                    <TextBlock Text="Назва страви" FontSize="12" />
+                    <TextBox Text="{Binding Name, Mode=TwoWay}"
+                            Watermark="Назва страви..."/>
+                </StackPanel>
+                
+                <StackPanel Grid.Column="1" Spacing="8">
+                    <TextBlock Text="Категорія" FontSize="12" />
+                    <ComboBox ItemsSource="{Binding Categories}"
+                             SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
+                             DisplayMemberBinding="{Binding Name}"
+                             PlaceholderText="Оберіть категорію..."/>
+                </StackPanel>
+            </Grid>
+
+          
+            <StackPanel Spacing="8">
+                <TextBlock Text="Опис страви" FontSize="12" />
+                <TextBox Text="{Binding Description, Mode=TwoWay}"
+                        Watermark="Опис страви..."
+                        Height="80"
+                        AcceptsReturn="True"
+                        TextWrapping="Wrap"/>
+            </StackPanel>
+
+
+            <Grid ColumnDefinitions="* *" ColumnSpacing="16">
+                <StackPanel Grid.Column="0" Spacing="8">
+                    <TextBlock Text="Ціна (грн)" FontSize="12" />
+                    <NumericUpDown Value="{Binding Price, Mode=TwoWay}"
+                                  Minimum="0.01"
+                                  Maximum="10000"
+                                  Increment="0.50"
+                                  FormatString="F2"/>
+                </StackPanel>
+                
+                <StackPanel Grid.Column="1" Spacing="8">
+                    <TextBlock Text="Час приготування (хвилин)" FontSize="12" />
+                    <NumericUpDown Value="{Binding EstimatedCookingTimeMinutes, Mode=TwoWay}"
+                                  Minimum="1"
+                                  Maximum="120"
+                                  Increment="1"/>
+                </StackPanel>
+            </Grid>
+            
+            <Grid ColumnDefinitions="* *" ColumnSpacing="16">
+                <StackPanel Grid.Column="0" Spacing="8">
+                    <TextBlock Text="Калорії" FontSize="12" />
+                    <NumericUpDown Value="{Binding Calories, Mode=TwoWay}"
+                                  Minimum="0"
+                                  Maximum="5000"
+                                  Increment="10"/>
+                </StackPanel>
+                
+                <StackPanel Grid.Column="1" Spacing="8">
+                    <TextBlock Text="Алергени" FontSize="12" />
+                    <TextBox Text="{Binding Allergens, Mode=TwoWay}"
+                            Watermark="Через кому..."/>
+                </StackPanel>
+            </Grid>
+            
+            <StackPanel Spacing="12">
+                <CheckBox Content="Доступна для замовлення" 
+                         IsChecked="{Binding IsAvailable, Mode=TwoWay}"/>
+                <CheckBox Content="Популярна страва" 
+                         IsChecked="{Binding IsPopular, Mode=TwoWay}"/>
+                <CheckBox Content="Рекомендована страва" 
+                         IsChecked="{Binding IsRecommended, Mode=TwoWay}"/>
+            </StackPanel>
+        </StackPanel>
+        
+        <Grid ColumnDefinitions="* Auto Auto" ColumnSpacing="12">
+            <ProgressBar Grid.Column="0" 
+                        IsIndeterminate="True" 
+                        IsVisible="{Binding IsBusy}"
+                        Height="4"
+                        VerticalAlignment="Center" />
+
+            <Button Grid.Column="1" 
+                   Classes="btn btn-outline"
+                   Content="Скасувати"
+                   Command="{Binding CancelCommand}"
+                   Width="100" />
+
+            <Button Grid.Column="2" 
+                   Classes="btn btn-primary"
+                   Content="{Binding SubmitText}"
+                   Command="{Binding SubmitCommand}"
+                   IsEnabled="{Binding !IsBusy}"
+                   Width="100" />
+        </Grid>
+    </StackPanel>
+</UserControl>

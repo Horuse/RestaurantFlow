@@ -1,0 +1,195 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:RestaurantFlow.Server.ViewModels"
+             xmlns:models="using:RestaurantFlow.Server.Models"
+             xmlns:shadui="clr-namespace:ShadUI;assembly=ShadUI"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="600"
+             x:Class="RestaurantFlow.Server.Views.KitchenView"
+             x:DataType="vm:KitchenViewModel">
+
+    <Design.DataContext>
+        <vm:KitchenViewModel/>
+    </Design.DataContext>
+
+    <StackPanel Spacing="24">
+        <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16">
+                <Button Classes="Secondary" 
+                        Content="Оновити"
+                        Command="{Binding RefreshOrdersCommand}">
+                    <shadui:ButtonAssist.Icon>
+                        <TextBlock Classes="LucideIcon" Text="&#57732;" Margin="0,0,6,0" />
+                    </shadui:ButtonAssist.Icon>
+                </Button>
+            </StackPanel>
+        </Grid>
+        
+  
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Grid ColumnDefinitions="350,350,350" ColumnSpacing="16">
+                
+                <shadui:Card Grid.Column="0" HasShadow="True">
+                    <shadui:Card.Header>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Classes="LucideIcon" Text="⏳" FontSize="16"/>
+                            <TextBlock Text="Нові замовлення" FontWeight="SemiBold" Classes="h5"/>
+                            <TextBlock Text="{Binding PendingOrders.Count, StringFormat='({0})'}" 
+                                     Classes="Caption Muted" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </shadui:Card.Header>
+                    
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="500">
+                        <ItemsControl ItemsSource="{Binding PendingOrders}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="models:OrderCardViewModel">
+                                    <shadui:Card Classes="Compact" Margin="0,0,0,8">
+                                        <StackPanel Spacing="12">
+                                        
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <TextBlock Grid.Column="0" Text="{Binding OrderNumber}" 
+                                                         FontWeight="SemiBold" Classes="Body"/>
+                                                <shadui:Badge Grid.Column="1" 
+                                                              Background="#6c757d"
+                                                              Content="Новий"/>
+                                            </Grid>
+                                            
+                             
+                                            <TextBlock Text="{Binding TableInfo}" 
+                                                      Classes="Caption Muted"/>
+                                            
+                                    
+                                            <TextBlock Text="{Binding ItemsDescription}" 
+                                                      Classes="Small"
+                                                      TextWrapping="Wrap"/>
+                                            
+                                   
+                                            <TextBlock Text="{Binding CreatedTime}" 
+                                                      Classes="Caption Muted"/>
+                                            
+                                   
+                                            <Button Content="Почати готувати" 
+                                                   Command="{Binding StartCookingCommand}"
+                                                   Classes="Primary"
+                                                   HorizontalAlignment="Stretch">
+                                                <shadui:ButtonAssist.Icon>
+                                                    <TextBlock Classes="LucideIcon" Text="🚀" Margin="0,0,6,0" />
+                                                </shadui:ButtonAssist.Icon>
+                                            </Button>
+                                        </StackPanel>
+                                    </shadui:Card>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                </shadui:Card>
+                
+        
+                <shadui:Card Grid.Column="1" HasShadow="True">
+                    <shadui:Card.Header>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Classes="LucideIcon" Text="👨‍🍳" FontSize="16"/>
+                            <TextBlock Text="Готується" FontWeight="SemiBold" Classes="h5"/>
+                            <TextBlock Text="{Binding InProgressOrders.Count, StringFormat='({0})'}" 
+                                     Classes="Caption Muted" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </shadui:Card.Header>
+                    
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="500">
+                        <ItemsControl ItemsSource="{Binding InProgressOrders}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="models:OrderCardViewModel">
+                                    <shadui:Card Classes="Compact" Margin="0,0,0,8" Background="#fff3cd">
+                                        <StackPanel Spacing="12">
+                                      
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <TextBlock Grid.Column="0" Text="{Binding OrderNumber}" 
+                                                         FontWeight="SemiBold" Classes="Body"/>
+                                                <shadui:Badge Grid.Column="1" 
+                                                              Background="#ffc107"
+                                                              Content="Готується"/>
+                                            </Grid>
+                                            
+                                            <TextBlock Text="{Binding TableInfo}" Classes="Caption Muted"/>
+                                            <TextBlock Text="{Binding ItemsDescription}" Classes="Small" TextWrapping="Wrap"/>
+                                            <TextBlock Text="{Binding CookingTime}" Classes="Caption" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding CreatedTime}" Classes="Caption Muted"/>
+                                            
+                                            <Button Content="Готово" 
+                                                   Command="{Binding MarkReadyCommand}"
+                                                   Classes="Positive"
+                                                   HorizontalAlignment="Stretch">
+                                                <shadui:ButtonAssist.Icon>
+                                                    <TextBlock Classes="LucideIcon" Text="✅" Margin="0,0,6,0" />
+                                                </shadui:ButtonAssist.Icon>
+                                            </Button>
+                                        </StackPanel>
+                                    </shadui:Card>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </shadui:Card>
+                
+             
+                <shadui:Card Grid.Column="2" HasShadow="True">
+                    <shadui:Card.Header>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Classes="LucideIcon" Text="🔔" FontSize="16"/>
+                            <TextBlock Text="Готово до видачі" FontWeight="SemiBold" Classes="h5"/>
+                            <TextBlock Text="{Binding ReadyOrders.Count, StringFormat='({0})'}" 
+                                     Classes="Caption Muted" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </shadui:Card.Header>
+                    
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="500">
+                        <ItemsControl ItemsSource="{Binding ReadyOrders}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="models:OrderCardViewModel">
+                                    <shadui:Card Classes="Compact" Margin="0,0,0,8" Background="#d4edda">
+                                        <StackPanel Spacing="12">
+                                         
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <TextBlock Grid.Column="0" Text="{Binding OrderNumber}" 
+                                                         FontWeight="SemiBold" Classes="Body"/>
+                                                <shadui:Badge Grid.Column="1" 
+                                                              Background="#28a745"
+                                                              Content="Готово"/>
+                                            </Grid>
+                                            
+                                            <TextBlock Text="{Binding TableInfo}" Classes="Caption" Foreground="#155724"/>
+                                            <TextBlock Text="{Binding ItemsDescription}" Classes="Small" TextWrapping="Wrap"/>
+                                            <TextBlock Text="{Binding ReadyTime}" Classes="Caption" FontWeight="SemiBold" Foreground="#155724"/>
+                                            <TextBlock Text="{Binding CookingTime}" Classes="Caption Muted"/>
+                                            
+                                            <TextBlock Text="🔔 Повідомте касу!" 
+                                                      Classes="Caption" 
+                                                      FontWeight="SemiBold"
+                                                      Foreground="#28a745"
+                                                      HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </shadui:Card>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </shadui:Card>
+            </Grid>
+        </ScrollViewer>
+        
+        
+        <Border IsVisible="{Binding IsLoading}" 
+                Background="{DynamicResource CardBackgroundColor}"
+                CornerRadius="8"
+                Padding="32"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
+                <ProgressBar IsIndeterminate="True" Width="200" Height="4"/>
+                <TextBlock Text="Завантаження замовлень..." Classes="Small"/>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+
+</UserControl>
