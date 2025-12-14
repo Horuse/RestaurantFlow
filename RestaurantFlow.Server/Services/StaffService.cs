@@ -6,63 +6,46 @@ using System.Threading.Tasks;
 using RestaurantFlow.Data;
 using RestaurantFlow.Data.Entities;
 using RestaurantFlow.Shared.Enums;
+using RestaurantFlow.Server.Repositories;
 
 namespace RestaurantFlow.Server.Services;
 
 public class StaffService : IStaffService
 {
-    private readonly RestaurantDbContext _context;
+    private readonly IStaffRepository _staffRepository;
     
-    public StaffService(RestaurantDbContext context)
+    public StaffService(IStaffRepository staffRepository)
     {
-        _context = context;
+        _staffRepository = staffRepository;
     }
     
     public async Task<List<Staff>> GetStaffAsync()
     {
-        return await _context.Staff
-            .OrderBy(s => s.Name)
-            .ToListAsync();
+        return await _staffRepository.GetAllAsync();
     }
     
     public async Task<List<Staff>> GetActiveStaffAsync()
     {
-        return await _context.Staff
-            .Where(s => s.IsActive)
-            .OrderBy(s => s.Name)
-            .ToListAsync();
+        return await _staffRepository.GetActiveStaffAsync();
     }
     
     public async Task<List<Staff>> GetStaffByRoleAsync(StaffRole role)
     {
-        return await _context.Staff
-            .Where(s => s.IsActive && s.Role == role)
-            .OrderBy(s => s.Name)
-            .ToListAsync();
+        return await _staffRepository.GetStaffByRoleAsync(role);
     }
     
     public async Task<Staff> CreateStaffAsync(Staff staff)
     {
-        staff.CreatedAt = DateTime.UtcNow;
-        _context.Staff.Add(staff);
-        await _context.SaveChangesAsync();
-        return staff;
+        return await _staffRepository.AddAsync(staff);
     }
     
     public async Task<Staff> UpdateStaffAsync(Staff staff)
     {
-        _context.Staff.Update(staff);
-        await _context.SaveChangesAsync();
-        return staff;
+        return await _staffRepository.UpdateAsync(staff);
     }
     
     public async Task DeleteStaffAsync(int id)
     {
-        var staff = await _context.Staff.FindAsync(id);
-        if (staff != null)
-        {
-            staff.IsActive = false; // Soft delete
-            await _context.SaveChangesAsync();
-        }
+        await _staffRepository.SoftDeleteAsync(id);
     }
 }

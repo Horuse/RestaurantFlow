@@ -58,6 +58,17 @@ public partial class App : Application
         services.AddDbContext<RestaurantDbContext>(options =>
             options.UseSqlite("Data Source=restaurant.db"));
         
+        services.AddScoped<RestaurantFlow.Server.Repositories.IRepository<RestaurantFlow.Data.Entities.MenuItem>, RestaurantFlow.Server.Repositories.Repository<RestaurantFlow.Data.Entities.MenuItem>>();
+        services.AddScoped<RestaurantFlow.Server.Repositories.IRepository<RestaurantFlow.Data.Entities.Order>, RestaurantFlow.Server.Repositories.Repository<RestaurantFlow.Data.Entities.Order>>();
+        services.AddScoped<RestaurantFlow.Server.Repositories.IRepository<RestaurantFlow.Data.Entities.Ingredient>, RestaurantFlow.Server.Repositories.Repository<RestaurantFlow.Data.Entities.Ingredient>>();
+        services.AddScoped<RestaurantFlow.Server.Repositories.IRepository<RestaurantFlow.Data.Entities.Staff>, RestaurantFlow.Server.Repositories.Repository<RestaurantFlow.Data.Entities.Staff>>();
+        
+        services.AddScoped<RestaurantFlow.Server.Repositories.IMenuRepository, RestaurantFlow.Server.Repositories.MenuRepository>();
+        services.AddScoped<RestaurantFlow.Server.Repositories.IOrderRepository, RestaurantFlow.Server.Repositories.OrderRepository>();
+        services.AddScoped<RestaurantFlow.Server.Repositories.IInventoryRepository, RestaurantFlow.Server.Repositories.InventoryRepository>();
+        services.AddScoped<RestaurantFlow.Server.Repositories.IStaffRepository, RestaurantFlow.Server.Repositories.StaffRepository>();
+        services.AddScoped<RestaurantFlow.Server.Repositories.IAnalyticsRepository, RestaurantFlow.Server.Repositories.AnalyticsRepository>();
+        
         services.AddScoped<RestaurantFlow.Server.Services.IOrderService, RestaurantFlow.Server.Services.OrderService>();
         services.AddScoped<RestaurantFlow.Server.Services.IMenuService, RestaurantFlow.Server.Services.MenuService>();
         services.AddScoped<RestaurantFlow.Server.Services.IInventoryService, RestaurantFlow.Server.Services.InventoryService>();

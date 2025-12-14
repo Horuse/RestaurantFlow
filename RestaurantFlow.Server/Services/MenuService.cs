@@ -5,117 +5,73 @@ using System.Linq;
 using System.Threading.Tasks;
 using RestaurantFlow.Data;
 using RestaurantFlow.Data.Entities;
+using RestaurantFlow.Server.Repositories;
 
 namespace RestaurantFlow.Server.Services;
 
 public class MenuService : IMenuService
 {
-    private readonly RestaurantDbContext _context;
+    private readonly IMenuRepository _menuRepository;
+    private readonly IAnalyticsRepository _analyticsRepository;
     
-    public MenuService(RestaurantDbContext context)
+    public MenuService(IMenuRepository menuRepository, IAnalyticsRepository analyticsRepository)
     {
-        _context = context;
+        _menuRepository = menuRepository;
+        _analyticsRepository = analyticsRepository;
     }
     
     public async Task<List<Category>> GetCategoriesAsync()
     {
-        return await _context.Categories
-            .OrderBy(c => c.DisplayOrder)
-            .ToListAsync();
+        return await _menuRepository.GetCategoriesAsync();
     }
     
     public async Task<List<MenuItem>> GetMenuItemsAsync()
     {
-        return await _context.MenuItems
-            .Include(m => m.Category)
-            .ToListAsync();
+        return await _menuRepository.GetMenuItemsWithCategoriesAsync();
     }
     
     public async Task<List<MenuItem>> GetMenuItemsByCategoryAsync(int categoryId)
     {
-        return await _context.MenuItems
-            .Include(m => m.Category)
-            .Where(m => m.CategoryId == categoryId)
-            .ToListAsync();
+        return await _menuRepository.GetMenuItemsByCategoryAsync(categoryId);
     }
     
     public async Task<MenuItem?> GetMenuItemByIdAsync(int id)
     {
-        return await _context.MenuItems
-            .Include(m => m.Category)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        return await _menuRepository.GetMenuItemWithCategoryAsync(id);
     }
     
     public async Task<MenuItem> CreateMenuItemAsync(MenuItem menuItem)
     {
-        _context.MenuItems.Add(menuItem);
-        await _context.SaveChangesAsync();
-        return menuItem;
+        return await _menuRepository.AddAsync(menuItem);
     }
     
     public async Task<MenuItem> UpdateMenuItemAsync(MenuItem menuItem)
     {
-        _context.MenuItems.Update(menuItem);
-        await _context.SaveChangesAsync();
-        return menuItem;
+        return await _menuRepository.UpdateAsync(menuItem);
     }
     
     public async Task DeleteMenuItemAsync(int id)
     {
-        var menuItem = await _context.MenuItems.FindAsync(id);
-        if (menuItem != null)
-        {
-            _context.MenuItems.Remove(menuItem);
-            await _context.SaveChangesAsync();
-        }
+        await _menuRepository.DeleteAsync(id);
     }
     
     public async Task<Category> CreateCategoryAsync(Category category)
     {
-        _context.Categories.Add(category);
-        await _context.SaveChangesAsync();
-        return category;
+        return await _menuRepository.AddCategoryAsync(category);
     }
     
     public async Task<Category> UpdateCategoryAsync(Category category)
     {
-        _context.Categories.Update(category);
-        await _context.SaveChangesAsync();
-        return category;
+        return await _menuRepository.UpdateCategoryAsync(category);
     }
     
     public async Task DeleteCategoryAsync(int id)
     {
-        var category = await _context.Categories.FindAsync(id);
-        if (category != null)
-        {
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
-        }
+        await _menuRepository.DeleteCategoryAsync(id);
     }
     
     public async Task<List<TopSellingMenuItem>> GetTopSellingItemsAsync(DateTime startDate, DateTime endDate, int limit)
     {
-        return await _context.OrderItems
-            .Include(oi => oi.MenuItem)
-            .Include(oi => oi.Order)
-            .Where(oi => oi.Order.CreatedAt >= startDate && oi.Order.CreatedAt < endDate)
-            .GroupBy(oi => new { oi.MenuItemId, oi.MenuItem.Name })
-            .Select(g => new TopSellingMenuItem
-            {
-                Name = g.Key.Name,
-                TotalQuantity = g.Sum(oi => oi.Quantity),
-                TotalRevenue = g.Sum(oi => oi.Price * oi.Quantity)
-            })
-            .OrderByDescending(t => t.TotalQuantity)
-            .Take(limit)
-            .ToListAsync();
+        return await _analyticsRepository.GetTopSellingItemsAsync(startDate, endDate, limit);
     }
-}
-
-public class TopSellingMenuItem
-{
-    public string Name { get; set; } = "";
-    public int TotalQuantity { get; set; }
-    public decimal TotalRevenue { get; set; }
 }
