@@ -1,0 +1,213 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:RestaurantFlow.Client.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:Class="RestaurantFlow.Client.Views.CartView"
+             x:DataType="vm:CartViewModel">
+
+    <Design.DataContext>
+        <vm:CartViewModel/>
+    </Design.DataContext>
+
+    <Grid>
+        <!-- Cart Content -->
+        <Grid Margin="20,20,20,120">
+            <!-- Empty Cart -->
+            <StackPanel IsVisible="{Binding IsCartEmpty}" 
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Center"
+                        Spacing="20">
+                <TextBlock Text="🛒" FontSize="80" HorizontalAlignment="Center" Opacity="0.3"/>
+                <TextBlock Text="Ваш кошик порожній" 
+                           FontSize="24" FontWeight="Bold" 
+                           HorizontalAlignment="Center"
+                           Foreground="#666"/>
+                <TextBlock Text="Додайте страви з меню, щоб зробити замовлення" 
+                           FontSize="16" 
+                           HorizontalAlignment="Center"
+                           Foreground="#999"/>
+            </StackPanel>
+
+            <!-- Cart Items -->
+            <ScrollViewer IsVisible="{Binding !IsCartEmpty}">
+                <StackPanel Spacing="20" Margin="50,20">
+                    <!-- Cart Items List -->
+                    <ItemsControl ItemsSource="{Binding CartService.Items}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="White" 
+                                        CornerRadius="15" 
+                                        Padding="20"
+                                        Margin="0,0,0,10">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="8" OffsetY="4" Opacity="0.1"/>
+                                    </Border.Effect>
+                                    
+                                    <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                                        <!-- Item Info -->
+                                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Width="300">
+                                            <TextBlock Text="{Binding MenuItem.Name}" 
+                                                       FontSize="18" FontWeight="Bold" 
+                                                       TextWrapping="Wrap"/>
+                                            <TextBlock Text="{Binding MenuItem.Description}" 
+                                                       FontSize="12" Foreground="#666" 
+                                                       TextWrapping="Wrap" MaxLines="2"
+                                                       Margin="0,5,0,0"/>
+                                            <TextBlock Text="{Binding SpecialInstructions}" 
+                                                       FontSize="12" Foreground="#DA291C" 
+                                                       TextWrapping="Wrap"
+                                                       IsVisible="{Binding SpecialInstructions, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                                       Margin="0,5,0,0"/>
+                                        </StackPanel>
+
+                                        <!-- Price -->
+                                        <TextBlock Grid.Column="1" 
+                                                   Text="{Binding MenuItem.Price, StringFormat='₴{0:F2}'}" 
+                                                   FontSize="16" FontWeight="Bold"
+                                                   Foreground="#DA291C"
+                                                   VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center"/>
+
+                                        <!-- Quantity Controls -->
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" 
+                                                    VerticalAlignment="Center" Spacing="10">
+                                            <Button Content="−" 
+                                                    Background="#FFC72C" 
+                                                    Foreground="#DA291C"
+                                                    FontWeight="Bold"
+                                                    FontSize="18"
+                                                    Width="35" Height="35"
+                                                    CornerRadius="17"
+                                                    BorderThickness="0"
+                                                    Command="{Binding $parent[UserControl].((vm:CartViewModel)DataContext).DecreaseQuantityCommand}"
+                                                    CommandParameter="{Binding}"/>
+                                            
+                                            <Border Background="#F5F5F5" 
+                                                    CornerRadius="8" 
+                                                    Padding="15,8" 
+                                                    MinWidth="50">
+                                                <TextBlock Text="{Binding Quantity}" 
+                                                           FontWeight="Bold" 
+                                                           HorizontalAlignment="Center"/>
+                                            </Border>
+                                            
+                                            <Button Content="+" 
+                                                    Background="#FFC72C" 
+                                                    Foreground="#DA291C"
+                                                    FontWeight="Bold"
+                                                    FontSize="16"
+                                                    Width="35" Height="35"
+                                                    CornerRadius="17"
+                                                    BorderThickness="0"
+                                                    Command="{Binding $parent[UserControl].((vm:CartViewModel)DataContext).IncreaseQuantityCommand}"
+                                                    CommandParameter="{Binding}"/>
+                                        </StackPanel>
+
+                                        <!-- Total Price & Remove -->
+                                        <StackPanel Grid.Column="3" VerticalAlignment="Center" Spacing="8" HorizontalAlignment="Right">
+                                            <TextBlock Text="{Binding TotalPrice, StringFormat='₴{0:F2}'}" 
+                                                       FontSize="18" FontWeight="Bold"
+                                                       Foreground="#DA291C"
+                                                       HorizontalAlignment="Right"/>
+                                            
+                                            <Button Content="🗑️" 
+                                                    Background="Transparent" 
+                                                    Foreground="#DA291C"
+                                                    FontSize="16"
+                                                    BorderThickness="0"
+                                                    Command="{Binding $parent[UserControl].((vm:CartViewModel)DataContext).RemoveItemCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    ToolTip.Tip="Видалити з кошика"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Order Summary -->
+                    <Border Background="#F8F9FA" 
+                            CornerRadius="15" 
+                            Padding="30"
+                            Margin="0,20,0,0">
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                            <!-- Items Count -->
+                            <TextBlock Grid.Row="0" Grid.Column="0" 
+                                       Text="Кількість страв:" 
+                                       FontSize="16"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" 
+                                       Text="{Binding CartService.TotalItems}" 
+                                       FontSize="16" FontWeight="Bold"/>
+
+                            <!-- Separator -->
+                            <Rectangle Grid.Row="1" Grid.ColumnSpan="2" 
+                                       Height="1" Fill="#E0E0E0" 
+                                       Margin="0,15"/>
+
+                            <!-- Total -->
+                            <TextBlock Grid.Row="2" Grid.Column="0" 
+                                       Text="Загальна сума:" 
+                                       FontSize="20" FontWeight="Bold"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" 
+                                       Text="{Binding CartService.TotalPrice, StringFormat='₴{0:F2}'}" 
+                                       FontSize="20" FontWeight="Bold"
+                                       Foreground="#DA291C"/>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- Action Buttons (Fixed at bottom) -->
+        <StackPanel VerticalAlignment="Bottom" 
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="20"
+                    Margin="0,0,0,30"
+                    ZIndex="20">
+            
+            <!-- Clear Cart -->
+            <Button Content="Очистити кошик"
+                    Background="Transparent"
+                    BorderBrush="#DA291C"
+                    BorderThickness="2"
+                    Foreground="#DA291C"
+                    CornerRadius="25"
+                    Padding="30,12"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    Command="{Binding ClearCartCommand}"
+                    IsVisible="{Binding !IsCartEmpty}">
+                <Button.Styles>
+                    <Style Selector="Button:pointerover">
+                        <Setter Property="Background" Value="#DA291C"/>
+                        <Setter Property="Foreground" Value="White"/>
+                    </Style>
+                </Button.Styles>
+            </Button>
+
+            <!-- Place Order -->
+            <Button Background="#DA291C"
+                    Foreground="White"
+                    BorderThickness="0"
+                    CornerRadius="30"
+                    Padding="40,15"
+                    FontSize="18"
+                    FontWeight="Bold"
+                    Command="{Binding PlaceOrderCommand}"
+                    IsVisible="{Binding !IsCartEmpty}">
+                <Button.Styles>
+                    <Style Selector="Button:pointerover">
+                        <Setter Property="Background" Value="#B8251C"/>
+                    </Style>
+                </Button.Styles>
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="📋"/>
+                    <TextBlock Text="Оформити замовлення"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

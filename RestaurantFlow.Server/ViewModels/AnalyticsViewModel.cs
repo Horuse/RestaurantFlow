@@ -51,12 +51,10 @@ public partial class AnalyticsViewModel : ReactiveObject
             var startDate = SelectedDate.Date;
             var endDate = startDate.AddDays(1);
             
-            // Get basic metrics
             var todayOrders = await _orderService.GetOrdersByDateRangeAsync(startDate, endDate);
             TodayOrderCount = todayOrders.Count;
             TodayRevenue = todayOrders.Sum(o => o.TotalAmount);
             
-            // Calculate average order time for completed orders
             var completedOrders = todayOrders.Where(o => o.CompletedAt.HasValue).ToList();
             if (completedOrders.Any())
             {
@@ -65,11 +63,9 @@ public partial class AnalyticsViewModel : ReactiveObject
                 AverageOrderTime = totalMinutes;
             }
             
-            // Get pending orders count
             var pendingOrders = await _orderService.GetActiveOrdersAsync();
             PendingOrdersCount = pendingOrders.Count;
             
-            // Get top selling items
             var topItems = await _menuService.GetTopSellingItemsAsync(startDate, endDate, 10);
             TopSellingItems.Clear();
             foreach (var item in topItems)
@@ -82,7 +78,6 @@ public partial class AnalyticsViewModel : ReactiveObject
                 });
             }
             
-            // Get hourly order data
             var hourlyData = todayOrders
                 .GroupBy(o => o.CreatedAt.Hour)
                 .Select(g => new HourlyOrderData

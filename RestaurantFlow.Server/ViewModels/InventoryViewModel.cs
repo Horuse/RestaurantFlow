@@ -127,7 +127,6 @@ public partial class InventoryViewModel : ReactiveObject
         }
         catch (Exception ex)
         {
-            // TODO: Show error message to user
         }
     }
     
@@ -148,7 +147,6 @@ public partial class InventoryViewModel : ReactiveObject
         }
         catch (Exception ex)
         {
-            // TODO: Show error message to user
         }
     }
     
@@ -168,7 +166,6 @@ public partial class InventoryViewModel : ReactiveObject
         }
         catch (Exception ex)
         {
-            // TODO: Show error message to user
         }
     }
     

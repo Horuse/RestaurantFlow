@@ -25,7 +25,7 @@
         
         <Grid Grid.Row="1" ColumnDefinitions="2*,*" ColumnSpacing="20">
 
-            <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="20" BorderBrush="#E0E0E0" BorderThickness="1">
+            <Border Grid.Column="0" CornerRadius="8" Padding="20" BorderBrush="#E0E0E0" BorderThickness="1">
                 <Grid RowDefinitions="Auto,*">
                     <TextBlock Grid.Row="0" Text="Інгредієнти" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,15"/>
                     
@@ -86,7 +86,7 @@
                             <ItemsControl ItemsSource="{Binding LowStockIngredients}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Background="White" CornerRadius="4" Padding="10" Margin="0,0,0,5">
+                                        <Border CornerRadius="4" Padding="10" Margin="0,0,0,5">
                                             <Grid ColumnDefinitions="*,Auto">
                                                 <TextBlock Grid.Column="0" Text="{Binding Name}" FontSize="12"/>
                                                 <TextBlock Grid.Column="1" Text="{Binding CurrentStock, StringFormat=F1}" 
@@ -101,7 +101,7 @@
                 </Border>
 
           
-                <Border Background="White" CornerRadius="8" Padding="15" BorderBrush="#E0E0E0" BorderThickness="1">
+                <Border CornerRadius="8" Padding="15" BorderBrush="#E0E0E0" BorderThickness="1">
                     <StackPanel>
                         <TextBlock Text="Коригування запасів" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,15"/>
                         
@@ -128,7 +128,6 @@
         </Grid>
         
         <Border Grid.Row="2" 
-               Background="White" 
                CornerRadius="8" 
                Padding="20" 
                BorderBrush="#E0E0E0" 
@@ -176,7 +175,7 @@
                Background="#80000000" 
                IsVisible="{Binding IsLoading}"
                IsHitTestVisible="True">
-            <Border HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" 
+            <Border HorizontalAlignment="Center" VerticalAlignment="Center" 
                    CornerRadius="10" Padding="30">
                 <StackPanel>
                     <TextBlock Text="⏳" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,10"/>

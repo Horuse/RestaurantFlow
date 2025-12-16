@@ -73,6 +73,7 @@ public partial class App : Application
         services.AddScoped<RestaurantFlow.Server.Services.IMenuService, RestaurantFlow.Server.Services.MenuService>();
         services.AddScoped<RestaurantFlow.Server.Services.IInventoryService, RestaurantFlow.Server.Services.InventoryService>();
         services.AddScoped<RestaurantFlow.Server.Services.IStaffService, RestaurantFlow.Server.Services.StaffService>();
+        services.AddSingleton<RestaurantFlow.Server.Services.ISignalRConnectionService, RestaurantFlow.Server.Services.SignalRConnectionService>();
         
         services.AddTransient<MainWindowViewModel>();
         services.AddTransient<KitchenViewModel>();

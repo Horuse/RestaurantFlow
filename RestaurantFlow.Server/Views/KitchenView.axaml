@@ -23,6 +23,26 @@
                         <TextBlock Classes="LucideIcon" Text="&#57732;" Margin="0,0,6,0" />
                     </shadui:ButtonAssist.Icon>
                 </Button>
+                
+                
+                <Border Background="Green" 
+                        CornerRadius="8" 
+                        Padding="8,4"
+                        IsVisible="{Binding IsSignalRConnected}">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="●" Foreground="White" FontSize="12"/>
+                        <TextBlock Text="Real-time ✓" Foreground="White" FontSize="12" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Border>
+                <Border Background="Red" 
+                        CornerRadius="8" 
+                        Padding="8,4"
+                        IsVisible="{Binding !IsSignalRConnected}">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="●" Foreground="White" FontSize="12"/>
+                        <TextBlock Text="Offline ✗" Foreground="White" FontSize="12" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Border>
             </StackPanel>
         </Grid>
         

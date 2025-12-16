@@ -1,6 +1,7 @@
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System.Reactive;
+using System;
 
 namespace RestaurantFlow.Server.ViewModels;
 
@@ -38,9 +39,14 @@ public partial class MainWindowViewModel : ReactiveObject
 
         NavigateToCommand = ReactiveCommand.Create<string>(NavigateTo);
 
-        // Set initial view
         CurrentView = KitchenViewModel;
         SelectedView = "Kitchen";
+        
+        this.WhenAnyValue(x => x.SelectedView)
+            .Subscribe(async viewName =>
+            {
+                await RefreshCurrentViewData(viewName);
+            });
     }
     
     private void NavigateTo(string viewName)
@@ -55,6 +61,34 @@ public partial class MainWindowViewModel : ReactiveObject
             "Analytics" => AnalyticsViewModel,
             _ => KitchenViewModel
         };
+    }
+    
+    private async System.Threading.Tasks.Task RefreshCurrentViewData(string viewName)
+    {
+        try
+        {
+            switch (viewName)
+            {
+                case "Kitchen":
+                    await KitchenViewModel.LoadOrdersAsync();
+                    break;
+                case "Counter":
+                    await CounterViewModel.LoadOrdersAsync();
+                    break;
+                case "Menu":
+                    await MenuViewModel.LoadDataAsync();
+                    break;
+                case "Inventory":
+                    await InventoryViewModel.LoadDataAsync();
+                    break;
+                case "Analytics":
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error refreshing view data: {ex.Message}");
+        }
     }
 
 }

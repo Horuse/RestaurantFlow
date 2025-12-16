@@ -8,16 +8,15 @@ public class OrderItem
     public int OrderId { get; set; }
     public int MenuItemId { get; set; }
     public int Quantity { get; set; }
-    public decimal Price { get; set; }  // Ціна на момент замовлення
+    public decimal Price { get; set; }
     public string SpecialRequests { get; set; } = string.Empty;
     public OrderStatus Status { get; set; }
-    public int? CookId { get; set; }  // Хто готує
+    public int? CookId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? StartedCookingAt { get; set; }
     public DateTime? ReadyAt { get; set; }
-    public string Notes { get; set; } = string.Empty;  // Нотатки кухаря
+    public string Notes { get; set; } = string.Empty;
     
-    // Navigation properties
     public Order Order { get; set; } = null!;
     public MenuItem MenuItem { get; set; } = null!;
     public Staff? Cook { get; set; }

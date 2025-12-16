@@ -1,0 +1,99 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:RestaurantFlow.Client.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:Class="RestaurantFlow.Client.Views.OrderSuccessView"
+             x:DataType="vm:OrderSuccessViewModel">
+
+    <Design.DataContext>
+        <vm:OrderSuccessViewModel/>
+    </Design.DataContext>
+
+    <Grid>
+        <StackPanel VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Spacing="30"
+                    MaxWidth="600">
+            
+            <Border Background="#4CAF50" 
+                    Width="100" Height="100"
+                    CornerRadius="50"
+                    HorizontalAlignment="Center">
+                <TextBlock Text="✓" 
+                           FontSize="60" 
+                           FontWeight="Bold"
+                           Foreground="White"
+                           HorizontalAlignment="Center" 
+                           VerticalAlignment="Center"/>
+            </Border>
+
+            <TextBlock Text="Замовлення успішно оформлене!" 
+                       FontSize="32" 
+                       FontWeight="Bold"
+                       Foreground="#4CAF50"
+                       HorizontalAlignment="Center"
+                       TextAlignment="Center"/>
+
+            <StackPanel Spacing="10" HorizontalAlignment="Center">
+                <TextBlock Text="Номер вашого замовлення:" 
+                           FontSize="18" 
+                           Foreground="#666"
+                           HorizontalAlignment="Center"/>
+                <Border Background="#FFC72C" 
+                        CornerRadius="15" 
+                        Padding="20,10">
+                    <TextBlock Text="{Binding OrderNumber}" 
+                               FontSize="24" 
+                               FontWeight="Bold"
+                               Foreground="#DA291C"
+                               HorizontalAlignment="Center"/>
+                </Border>
+            </StackPanel>
+
+            <TextBlock Text="Ваше замовлення передано на кухню. Зачекайте будь ласка." 
+                       FontSize="16" 
+                       Foreground="#666"
+                       HorizontalAlignment="Center"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"/>
+
+            <StackPanel Spacing="15" HorizontalAlignment="Center">
+                <TextBlock Text="Автоматичне повернення до меню через:" 
+                           FontSize="14" 
+                           Foreground="#999"
+                           HorizontalAlignment="Center"/>
+                
+                <Border Background="#F5F5F5" 
+                        CornerRadius="25" 
+                        Padding="20,10"
+                        MinWidth="80">
+                    <TextBlock Text="{Binding SecondsRemaining}" 
+                               FontSize="28" 
+                               FontWeight="Bold"
+                               Foreground="#DA291C"
+                               HorizontalAlignment="Center"/>
+                </Border>
+            </StackPanel>
+
+            <Button Content="Повернутися до меню зараз"
+                    Background="#DA291C"
+                    Foreground="White"
+                    BorderThickness="0"
+                    CornerRadius="25"
+                    Padding="30,15"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    HorizontalAlignment="Center"
+                    Command="{Binding BackToMenuCommand}">
+                <Button.Styles>
+                    <Style Selector="Button:pointerover">
+                        <Setter Property="Background" Value="#B8251C"/>
+                    </Style>
+                </Button.Styles>
+            </Button>
+
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -48,7 +48,6 @@
                         HorizontalAlignment="Stretch">
                         <StackPanel Orientation="Horizontal" Spacing="12">
                             <Border
-                                Background="White"
                                 CornerRadius="6"
                                 Width="32"
                                 Height="32"

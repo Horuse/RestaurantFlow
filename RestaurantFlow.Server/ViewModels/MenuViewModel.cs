@@ -122,7 +122,6 @@ public partial class MenuViewModel : ReactiveObject
         }
         catch (Exception ex)
         {
-            // TODO: Show error message to user
         }
     }
     

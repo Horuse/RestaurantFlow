@@ -72,7 +72,5 @@ public partial class CounterViewModel : ReactiveObject
     [ReactiveCommand]
     private async Task CallCustomer(OrderCardViewModel orderCard)
     {
-        // TODO: Implement customer notification system
-        // This could play a sound, display on screen, or send SMS
     }
 }

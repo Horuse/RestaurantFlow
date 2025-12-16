@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace RestaurantFlow.Client.Views;
 
-public partial class MainWindow : Window
+public partial class CartView : UserControl
 {
-    public MainWindow()
+    public CartView()
     {
         InitializeComponent();
     }

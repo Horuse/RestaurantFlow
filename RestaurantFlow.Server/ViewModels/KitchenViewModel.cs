@@ -2,15 +2,19 @@ using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Linq;
+using System;
 using RestaurantFlow.Server.Services;
 using RestaurantFlow.Server.Models;
+using RestaurantFlow.Server.DTOs;
 using RestaurantFlow.Shared.Enums;
 
 namespace RestaurantFlow.Server.ViewModels;
 
-public partial class KitchenViewModel : ReactiveObject
+public partial class KitchenViewModel : ReactiveObject, IDisposable
 {
     private readonly IOrderService _orderService;
+    private readonly ISignalRConnectionService _signalRService;
     
     [Reactive]
     private ObservableCollection<OrderCardViewModel> _pendingOrders = new();
@@ -24,9 +28,78 @@ public partial class KitchenViewModel : ReactiveObject
     [Reactive]
     private bool _isLoading = false;
 
-    public KitchenViewModel(IOrderService orderService)
+    [Reactive]
+    private bool _isSignalRConnected = false;
+
+    public KitchenViewModel(IOrderService orderService, ISignalRConnectionService signalRService)
     {
         _orderService = orderService;
+        _signalRService = signalRService;
+        
+        _signalRService.NewOrderReceived += OnNewOrderReceived;
+        _signalRService.OrderStatusChanged += OnOrderStatusChanged;
+        
+        _ = LoadOrdersAsync();
+        _ = ConnectToSignalRAsync();
+    }
+
+    private async Task ConnectToSignalRAsync()
+    {
+        try
+        {
+            await _signalRService.StartConnectionAsync();
+            IsSignalRConnected = _signalRService.IsConnected;
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine($"Failed to connect to SignalR: {ex.Message}");
+            IsSignalRConnected = false;
+        }
+    }
+
+    private async void OnNewOrderReceived(OrderResponse order)
+    {
+        System.Console.WriteLine($"Kitchen received new order: {order.OrderNumber}");
+        
+        var orderEntity = new RestaurantFlow.Data.Entities.Order
+        {
+            Id = order.Id,
+            OrderNumber = order.OrderNumber,
+            Status = order.Status,
+            TableNumber = order.TableNumber,
+            TotalAmount = order.TotalAmount,
+            CreatedAt = order.CreatedAt,
+            CompletedAt = order.CompletedAt,
+            OrderItems = order.Items.Select(item => new RestaurantFlow.Data.Entities.OrderItem
+            {
+                Id = item.Id,
+                MenuItemId = item.MenuItemId,
+                Quantity = item.Quantity,
+                Price = item.Price,
+                Status = item.Status,
+                SpecialRequests = item.SpecialInstructions ?? string.Empty,
+                StartedCookingAt = item.StartedCookingAt,
+                ReadyAt = item.ReadyAt,
+                MenuItem = new RestaurantFlow.Data.Entities.MenuItem { Name = item.MenuItemName }
+            }).ToList()
+        };
+
+        var orderCard = new OrderCardViewModel(orderEntity, _orderService);
+        
+        await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (order.Status == OrderStatus.Pending)
+            {
+                PendingOrders.Add(orderCard);
+            }
+        });
+    }
+
+    private async void OnOrderStatusChanged(OrderStatusUpdate update)
+    {
+        System.Console.WriteLine($"Kitchen received order status update: {update.OrderId} -> {update.Status}");
+        
+        await LoadOrdersAsync();
     }
 
     public async Task LoadOrdersAsync()
@@ -82,5 +155,11 @@ public partial class KitchenViewModel : ReactiveObject
     {
         await _orderService.UpdateOrderStatusAsync(orderCard.Id, OrderStatus.Ready);
         await LoadOrdersAsync();
+    }
+
+    public void Dispose()
+    {
+        _signalRService.NewOrderReceived -= OnNewOrderReceived;
+        _signalRService.OrderStatusChanged -= OnOrderStatusChanged;
     }
 }

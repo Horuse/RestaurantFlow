@@ -5,7 +5,7 @@
              x:DataType="vm:AnalyticsViewModel">
 
     <Grid>
-        <Border Background="White" CornerRadius="10" Margin="20" Padding="30">
+        <Border CornerRadius="10" Margin="20" Padding="30">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock Text="📊" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,20"/>
                 <TextBlock Text="Аналітика продажів" 

@@ -1,20 +1,159 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:RestaurantFlow.Client.ViewModels"
+        xmlns:views="using:RestaurantFlow.Client.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="900"
         x:Class="RestaurantFlow.Client.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="RestaurantFlow.Client">
+        Title="RestaurantFlow Client"
+        WindowState="Maximized"
+        Background="#F0F0F0">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <Grid>
+        <!-- Header -->
+        <Border Height="80" VerticalAlignment="Top" Background="#DA291C" 
+                CornerRadius="0,0,20,20" ZIndex="10">
+            <Grid ColumnDefinitions="Auto,*,Auto" Margin="30,0">
+                <!-- Categories -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" 
+                            VerticalAlignment="Center" Spacing="15"
+                            IsVisible="{Binding IsMenuView}">
+                    <ItemsControl ItemsSource="{Binding Categories}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="10"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding Name}"
+                                        Background="Transparent"
+                                        BorderBrush="White"
+                                        BorderThickness="2"
+                                        Foreground="White"
+                                        Padding="15,8"
+                                        CornerRadius="20"
+                                        FontWeight="SemiBold"
+                                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).SelectCategoryCommand}"
+                                        CommandParameter="{Binding}">
+                                    <Button.Styles>
+                                        <Style Selector="Button:pointerover">
+                                            <Setter Property="Background" Value="#FFC72C"/>
+                                            <Setter Property="Foreground" Value="#DA291C"/>
+                                        </Style>
+                                    </Button.Styles>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
 
+                <!-- Back Button (visible only in cart view) -->
+                <Button Grid.Column="0" 
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderBrush="White"
+                        BorderThickness="2"
+                        Foreground="White"
+                        Padding="15,8"
+                        CornerRadius="20"
+                        FontWeight="SemiBold"
+                        Content="← Назад до меню"
+                        Command="{Binding CartViewModel.BackToMenuCommand}"
+                        IsVisible="{Binding IsCartView}">
+                    <Button.Styles>
+                        <Style Selector="Button:pointerover">
+                            <Setter Property="Background" Value="#FFC72C"/>
+                            <Setter Property="Foreground" Value="#DA291C"/>
+                        </Style>
+                    </Button.Styles>
+                </Button>
+
+                <!-- Title -->
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="🍔 McDonald's" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"
+                               IsVisible="{Binding IsMenuView}"/>
+                    <TextBlock Text="🛒 Ваш кошик" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"
+                               IsVisible="{Binding IsCartView}"/>
+                    <TextBlock Text="{Binding CartService.TotalItems, StringFormat='{}{0} товарів'}" 
+                               FontSize="12" Foreground="#FFE4B8" HorizontalAlignment="Center"
+                               IsVisible="{Binding IsCartView}"/>
+                    <TextBlock Text="✓ Замовлення оформлене" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"
+                               IsVisible="{Binding IsOrderSuccessView}"/>
+                </StackPanel>
+
+                <!-- Table Number -->
+                <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                    <TextBlock Text="Столик №" Foreground="White" FontSize="14" HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding TableNumberText}" 
+                             Width="80" 
+                             Height="35"
+                             Background="White"
+                             CornerRadius="8"
+                             BorderBrush="#CCC"
+                             BorderThickness="1"
+                             FontSize="16"
+                             FontWeight="Bold"
+                             TextAlignment="Center"
+                             VerticalContentAlignment="Center"
+                             Watermark="1"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Content Views -->
+        <Grid Margin="0,100,0,0">
+            <!-- Menu View -->
+            <views:MenuView IsVisible="{Binding $parent[Window].DataContext.IsMenuView}" 
+                           DataContext="{Binding $parent[Window].DataContext}"/>
+
+            <!-- Cart View -->
+            <views:CartView IsVisible="{Binding $parent[Window].DataContext.IsCartView}" 
+                           DataContext="{Binding $parent[Window].DataContext.CartViewModel}"/>
+
+            <!-- Order Success View -->
+            <views:OrderSuccessView IsVisible="{Binding $parent[Window].DataContext.IsOrderSuccessView}" 
+                                   DataContext="{Binding $parent[Window].DataContext.OrderSuccessViewModel}"/>
+        </Grid>
+
+        <!-- Cart Button (Fixed at bottom) - Only visible in menu view -->
+        <Button VerticalAlignment="Bottom" 
+                HorizontalAlignment="Center"
+                Background="#DA291C"
+                Foreground="White"
+                BorderThickness="0"
+                CornerRadius="30"
+                Padding="30,15"
+                FontSize="18"
+                FontWeight="Bold"
+                Margin="0,0,0,30"
+                Command="{Binding OpenCartCommand}"
+                IsVisible="{Binding IsMenuView}"
+                ZIndex="20">
+            <Button.Styles>
+                <Style Selector="Button:pointerover">
+                    <Setter Property="Background" Value="#B8251C"/>
+                </Style>
+            </Button.Styles>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="🛒"/>
+                <TextBlock Text="Кошик"/>
+                <Border Background="#FFC72C" 
+                        CornerRadius="10" 
+                        Padding="8,4">
+                    <TextBlock Text="{Binding CartService.TotalItems}" 
+                               Foreground="#DA291C" 
+                               FontWeight="Bold" 
+                               FontSize="12"/>
+                </Border>
+                <TextBlock Text="{Binding CartService.TotalPrice, StringFormat='₴{0:F2}'}"/>
+            </StackPanel>
+        </Button>
+    </Grid>
 </Window>
