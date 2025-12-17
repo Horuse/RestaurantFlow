@@ -24,25 +24,6 @@
                     </shadui:ButtonAssist.Icon>
                 </Button>
                 
-                
-                <Border Background="Green" 
-                        CornerRadius="8" 
-                        Padding="8,4"
-                        IsVisible="{Binding IsSignalRConnected}">
-                    <StackPanel Orientation="Horizontal" Spacing="4">
-                        <TextBlock Text="●" Foreground="White" FontSize="12"/>
-                        <TextBlock Text="Real-time ✓" Foreground="White" FontSize="12" FontWeight="SemiBold"/>
-                    </StackPanel>
-                </Border>
-                <Border Background="Red" 
-                        CornerRadius="8" 
-                        Padding="8,4"
-                        IsVisible="{Binding !IsSignalRConnected}">
-                    <StackPanel Orientation="Horizontal" Spacing="4">
-                        <TextBlock Text="●" Foreground="White" FontSize="12"/>
-                        <TextBlock Text="Offline ✗" Foreground="White" FontSize="12" FontWeight="SemiBold"/>
-                    </StackPanel>
-                </Border>
             </StackPanel>
         </Grid>
         
@@ -53,8 +34,7 @@
                 <shadui:Card Grid.Column="0" HasShadow="True">
                     <shadui:Card.Header>
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <TextBlock Classes="LucideIcon" Text="⏳" FontSize="16"/>
-                            <TextBlock Text="Нові замовлення" FontWeight="SemiBold" Classes="h5"/>
+                            <TextBlock Text="Нові замовлення" FontWeight="SemiBold" FontSize="20"/>
                             <TextBlock Text="{Binding PendingOrders.Count, StringFormat='({0})'}" 
                                      Classes="Caption Muted" VerticalAlignment="Center"/>
                         </StackPanel>
@@ -70,7 +50,7 @@
                                             <Grid ColumnDefinitions="*,Auto">
                                                 <TextBlock Grid.Column="0" Text="{Binding OrderNumber}" 
                                                          FontWeight="SemiBold" Classes="Body"/>
-                                                <shadui:Badge Grid.Column="1" 
+                                                <shadui:Badge Padding="6" Grid.Column="1" 
                                                               Background="#6c757d"
                                                               Content="Новий"/>
                                             </Grid>
@@ -93,9 +73,6 @@
                                                    Command="{Binding StartCookingCommand}"
                                                    Classes="Primary"
                                                    HorizontalAlignment="Stretch">
-                                                <shadui:ButtonAssist.Icon>
-                                                    <TextBlock Classes="LucideIcon" Text="🚀" Margin="0,0,6,0" />
-                                                </shadui:ButtonAssist.Icon>
                                             </Button>
                                         </StackPanel>
                                     </shadui:Card>
@@ -109,8 +86,7 @@
                 <shadui:Card Grid.Column="1" HasShadow="True">
                     <shadui:Card.Header>
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <TextBlock Classes="LucideIcon" Text="👨‍🍳" FontSize="16"/>
-                            <TextBlock Text="Готується" FontWeight="SemiBold" Classes="h5"/>
+                            <TextBlock Text="Готується" FontWeight="SemiBold" FontSize="20"/>
                             <TextBlock Text="{Binding InProgressOrders.Count, StringFormat='({0})'}" 
                                      Classes="Caption Muted" VerticalAlignment="Center"/>
                         </StackPanel>
@@ -120,31 +96,30 @@
                         <ItemsControl ItemsSource="{Binding InProgressOrders}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="models:OrderCardViewModel">
-                                    <shadui:Card Classes="Compact" Margin="0,0,0,8" Background="#fff3cd">
+                                    <shadui:Card BorderBrush="#facc15" Classes="Compact" Margin="0,0,0,8">
+                                        <Border CornerRadius="8" Padding="12">
                                         <StackPanel Spacing="12">
                                       
                                             <Grid ColumnDefinitions="*,Auto">
                                                 <TextBlock Grid.Column="0" Text="{Binding OrderNumber}" 
                                                          FontWeight="SemiBold" Classes="Body"/>
-                                                <shadui:Badge Grid.Column="1" 
+                                                <shadui:Badge Padding="6" Grid.Column="1" 
                                                               Background="#ffc107"
                                                               Content="Готується"/>
                                             </Grid>
                                             
                                             <TextBlock Text="{Binding TableInfo}" Classes="Caption Muted"/>
-                                            <TextBlock Text="{Binding ItemsDescription}" Classes="Small" TextWrapping="Wrap"/>
-                                            <TextBlock Text="{Binding CookingTime}" Classes="Caption" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding ItemsDescription}" Classes="Small" TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding CookingTime}" Classes="Caption Muted" />
                                             <TextBlock Text="{Binding CreatedTime}" Classes="Caption Muted"/>
-                                            
+                                             
                                             <Button Content="Готово" 
                                                    Command="{Binding MarkReadyCommand}"
-                                                   Classes="Positive"
+                                                   Classes="Primary"
                                                    HorizontalAlignment="Stretch">
-                                                <shadui:ButtonAssist.Icon>
-                                                    <TextBlock Classes="LucideIcon" Text="✅" Margin="0,0,6,0" />
-                                                </shadui:ButtonAssist.Icon>
                                             </Button>
                                         </StackPanel>
+                                        </Border>
                                     </shadui:Card>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -156,8 +131,7 @@
                 <shadui:Card Grid.Column="2" HasShadow="True">
                     <shadui:Card.Header>
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <TextBlock Classes="LucideIcon" Text="🔔" FontSize="16"/>
-                            <TextBlock Text="Готово до видачі" FontWeight="SemiBold" Classes="h5"/>
+                            <TextBlock Text="Готово до видачі" FontWeight="SemiBold" FontSize="20"/>
                             <TextBlock Text="{Binding ReadyOrders.Count, StringFormat='({0})'}" 
                                      Classes="Caption Muted" VerticalAlignment="Center"/>
                         </StackPanel>
@@ -167,27 +141,21 @@
                         <ItemsControl ItemsSource="{Binding ReadyOrders}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="models:OrderCardViewModel">
-                                    <shadui:Card Classes="Compact" Margin="0,0,0,8" Background="#d4edda">
+                                    <shadui:Card BorderBrush="#16a34a" Classes="Compact" Margin="0,0,0,8">
                                         <StackPanel Spacing="12">
                                          
                                             <Grid ColumnDefinitions="*,Auto">
                                                 <TextBlock Grid.Column="0" Text="{Binding OrderNumber}" 
                                                          FontWeight="SemiBold" Classes="Body"/>
-                                                <shadui:Badge Grid.Column="1" 
-                                                              Background="#28a745"
+                                                <shadui:Badge Padding="6" Grid.Column="1" 
+                                                              Background="#4ade80"
                                                               Content="Готово"/>
                                             </Grid>
                                             
-                                            <TextBlock Text="{Binding TableInfo}" Classes="Caption" Foreground="#155724"/>
-                                            <TextBlock Text="{Binding ItemsDescription}" Classes="Small" TextWrapping="Wrap"/>
-                                            <TextBlock Text="{Binding ReadyTime}" Classes="Caption" FontWeight="SemiBold" Foreground="#155724"/>
+                                            <TextBlock Text="{Binding TableInfo}" Classes="Caption Muted"/>
+                                            <TextBlock Text="{Binding ItemsDescription}" Classes="Small Muted" TextWrapping="Wrap"/>
+                                            <TextBlock Text="{Binding ReadyTime}" Classes="Caption Muted" FontWeight="SemiBold"/>
                                             <TextBlock Text="{Binding CookingTime}" Classes="Caption Muted"/>
-                                            
-                                            <TextBlock Text="🔔 Повідомте касу!" 
-                                                      Classes="Caption" 
-                                                      FontWeight="SemiBold"
-                                                      Foreground="#28a745"
-                                                      HorizontalAlignment="Center"/>
                                         </StackPanel>
                                     </shadui:Card>
                                 </DataTemplate>
