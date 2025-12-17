@@ -40,7 +40,7 @@ namespace RestaurantFlow.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("RestaurantFlow.Data.Entities.Ingredient", b =>
@@ -72,7 +72,7 @@ namespace RestaurantFlow.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Ingredients");
+                    b.ToTable("Ingredients", (string)null);
                 });
 
             modelBuilder.Entity("RestaurantFlow.Data.Entities.InventoryLog", b =>
@@ -103,7 +103,7 @@ namespace RestaurantFlow.Data.Migrations
 
                     b.HasIndex("IngredientId");
 
-                    b.ToTable("InventoryLogs");
+                    b.ToTable("InventoryLogs", (string)null);
                 });
 
             modelBuilder.Entity("RestaurantFlow.Data.Entities.MenuItem", b =>
@@ -162,7 +162,7 @@ namespace RestaurantFlow.Data.Migrations
 
                     b.HasIndex("IsAvailable");
 
-                    b.ToTable("MenuItems");
+                    b.ToTable("MenuItems", (string)null);
                 });
 
             modelBuilder.Entity("RestaurantFlow.Data.Entities.MenuItemIngredient", b =>
@@ -181,7 +181,7 @@ namespace RestaurantFlow.Data.Migrations
 
                     b.HasIndex("IngredientId");
 
-                    b.ToTable("MenuItemIngredients");
+                    b.ToTable("MenuItemIngredients", (string)null);
                 });
 
             modelBuilder.Entity("RestaurantFlow.Data.Entities.Order", b =>
@@ -238,7 +238,7 @@ namespace RestaurantFlow.Data.Migrations
 
                     b.HasIndex("OrderType", "TableNumber");
 
-                    b.ToTable("Orders", t =>
+                    b.ToTable("Orders", null, t =>
                         {
                             t.HasCheckConstraint("CK_Order_TableNumber", "[TableNumber] IS NULL OR ([TableNumber] >= 1 AND [TableNumber] <= 10)");
                         });
@@ -296,7 +296,7 @@ namespace RestaurantFlow.Data.Migrations
 
                     b.HasIndex("Status");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("RestaurantFlow.Data.Entities.Staff", b =>
@@ -323,7 +323,7 @@ namespace RestaurantFlow.Data.Migrations
 
                     b.HasIndex("Role", "IsActive");
 
-                    b.ToTable("Staff");
+                    b.ToTable("Staff", (string)null);
                 });
 
             modelBuilder.Entity("RestaurantFlow.Data.Entities.InventoryLog", b =>

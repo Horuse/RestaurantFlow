@@ -76,6 +76,41 @@
                 </StackPanel>
             </Grid>
             
+            <StackPanel Spacing="8">
+                <TextBlock Text="Інгредієнти" FontSize="12" />
+                <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding AvailableIngredients}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="8" Margin="0,2">
+                                    <Grid ColumnDefinitions="Auto,*,100,Auto">
+                                        <CheckBox Grid.Column="0" 
+                                                 IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                                        <TextBlock Grid.Column="1" 
+                                                  Text="{Binding Name}" 
+                                                  VerticalAlignment="Center" 
+                                                  Margin="8,0,0,0" />
+                                        <NumericUpDown Grid.Column="2"
+                                                      Value="{Binding Quantity, Mode=TwoWay}"
+                                                      Minimum="0"
+                                                      Maximum="1000"
+                                                      Increment="0.1"
+                                                      FormatString="F2"
+                                                      IsEnabled="{Binding IsSelected}"
+                                                      Margin="8,0" />
+                                        <TextBlock Grid.Column="3" 
+                                                  Text="{Binding Unit}" 
+                                                  VerticalAlignment="Center" 
+                                                  FontSize="10" 
+                                                  Foreground="#666666" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+
             <StackPanel Spacing="12">
                 <CheckBox Content="Доступна для замовлення" 
                          IsChecked="{Binding IsAvailable, Mode=TwoWay}"/>

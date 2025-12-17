@@ -27,7 +27,22 @@ public class MenuService : IMenuService
     
     public async Task<List<MenuItem>> GetMenuItemsAsync()
     {
-        return await _menuRepository.GetMenuItemsWithCategoriesAsync();
+        var menuItems = await _menuRepository.GetMenuItemsWithCategoriesAsync();
+        
+        // Перевіряємо доступність кожної страви
+        foreach (var item in menuItems)
+        {
+            if (item.IsAvailable)
+            {
+                item.IsCurrentlyAvailable = await IsMenuItemAvailableAsync(item.Id);
+            }
+            else
+            {
+                item.IsCurrentlyAvailable = false;
+            }
+        }
+        
+        return menuItems;
     }
     
     public async Task<List<MenuItem>> GetMenuItemsByCategoryAsync(int categoryId)
@@ -73,5 +88,30 @@ public class MenuService : IMenuService
     public async Task<List<TopSellingMenuItem>> GetTopSellingItemsAsync(DateTime startDate, DateTime endDate, int limit)
     {
         return await _analyticsRepository.GetTopSellingItemsAsync(startDate, endDate, limit);
+    }
+
+    public async Task<List<MenuItemIngredient>> GetMenuItemIngredientsAsync(int menuItemId)
+    {
+        return await _menuRepository.GetMenuItemIngredientsAsync(menuItemId);
+    }
+
+    public async Task UpdateMenuItemIngredientsAsync(int menuItemId, List<MenuItemIngredient> ingredients)
+    {
+        await _menuRepository.UpdateMenuItemIngredientsAsync(menuItemId, ingredients);
+    }
+
+    public async Task<bool> IsMenuItemAvailableAsync(int menuItemId)
+    {
+        var menuItemIngredients = await _menuRepository.GetMenuItemIngredientsAsync(menuItemId);
+        
+        foreach (var mii in menuItemIngredients)
+        {
+            if (mii.Ingredient.CurrentStock < mii.Quantity)
+            {
+                return false; // Недостатньо інгредієнта
+            }
+        }
+        
+        return true; // Всі інгредієнти доступні
     }
 }

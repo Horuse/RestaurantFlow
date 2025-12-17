@@ -11,13 +11,27 @@ using ShadUI;
 
 namespace RestaurantFlow.Server.ViewModels.Menu;
 
+public partial class IngredientSelectionItem : ReactiveObject
+{
+    [Reactive]
+    private bool _isSelected;
+    
+    [Reactive]
+    private decimal _quantity = 0;
+    
+    public Ingredient Ingredient { get; set; } = null!;
+    public string Name => Ingredient?.Name ?? "";
+    public string Unit => Ingredient?.Unit ?? "";
+}
+
 public partial class AddMenuItemViewModel : ReactiveObject
 {
     private readonly IMenuService _menuService;
+    private readonly IInventoryService _inventoryService;
     private readonly DialogManager _dialogManager;
     private readonly ToastManager _toastManager;
     private int? _menuItemId; // null для додавання, id для редагування
-
+    
     [Required(ErrorMessage = "Назва страви є обов'язковою")]
     [Reactive]
     private string _name = "";
@@ -69,10 +83,12 @@ public partial class AddMenuItemViewModel : ReactiveObject
     private string _submitText = "Додати";
 
     public ObservableCollection<Category> Categories { get; } = new();
+    public ObservableCollection<IngredientSelectionItem> AvailableIngredients { get; } = new();
 
-    public AddMenuItemViewModel(IMenuService menuService, DialogManager dialogManager, ToastManager toastManager)
+    public AddMenuItemViewModel(IMenuService menuService, IInventoryService inventoryService, DialogManager dialogManager, ToastManager toastManager)
     {
         _menuService = menuService;
+        _inventoryService = inventoryService;
         _dialogManager = dialogManager;
         _toastManager = toastManager;
     }
@@ -106,6 +122,18 @@ public partial class AddMenuItemViewModel : ReactiveObject
             IsRecommended = menuItem.IsRecommended;
             IsAvailable = menuItem.IsAvailable;
             SelectedCategory = Categories.FirstOrDefault(c => c.Id == menuItem.CategoryId);
+
+            // Завантажуємо інгредієнти страви
+            var menuItemIngredients = await _menuService.GetMenuItemIngredientsAsync(menuItemId);
+            foreach (var mii in menuItemIngredients)
+            {
+                var ingredientItem = AvailableIngredients.FirstOrDefault(ai => ai.Ingredient.Id == mii.IngredientId);
+                if (ingredientItem != null)
+                {
+                    ingredientItem.IsSelected = true;
+                    ingredientItem.Quantity = mii.Quantity;
+                }
+            }
         }
     }
 
@@ -115,11 +143,23 @@ public partial class AddMenuItemViewModel : ReactiveObject
         try
         {
             var categories = await _menuService.GetCategoriesAsync();
+            var ingredients = await _inventoryService.GetIngredientsAsync();
 
             Categories.Clear();
             foreach (var category in categories)
             {
                 Categories.Add(category);
+            }
+
+            AvailableIngredients.Clear();
+            foreach (var ingredient in ingredients)
+            {
+                AvailableIngredients.Add(new IngredientSelectionItem
+                {
+                    Ingredient = ingredient,
+                    IsSelected = false,
+                    Quantity = 0
+                });
             }
         }
         finally
@@ -177,6 +217,10 @@ public partial class AddMenuItemViewModel : ReactiveObject
                     menuItem.UpdatedAt = DateTime.UtcNow;
 
                     await _menuService.UpdateMenuItemAsync(menuItem);
+                    
+                    // Оновлюємо інгредієнти
+                    await SaveIngredientsAsync(menuItem.Id);
+                    
                     _dialogManager.Close(this, new CloseDialogOptions { Success = true });
                 }
             }
@@ -198,7 +242,11 @@ public partial class AddMenuItemViewModel : ReactiveObject
                     CreatedAt = DateTime.UtcNow
                 };
 
-                await _menuService.CreateMenuItemAsync(newMenuItem);
+                var createdMenuItem = await _menuService.CreateMenuItemAsync(newMenuItem);
+                
+                // Зберігаємо інгредієнти
+                await SaveIngredientsAsync(createdMenuItem.Id);
+                
                 _dialogManager.Close(this, new CloseDialogOptions { Success = true });
             }
         }
@@ -216,6 +264,21 @@ public partial class AddMenuItemViewModel : ReactiveObject
     private void Cancel()
     {
         _dialogManager.Close(this, new CloseDialogOptions { Success = false });
+    }
+
+    private async Task SaveIngredientsAsync(int menuItemId)
+    {
+        var selectedIngredients = AvailableIngredients
+            .Where(ai => ai.IsSelected && ai.Quantity > 0)
+            .Select(ai => new MenuItemIngredient
+            {
+                MenuItemId = menuItemId,
+                IngredientId = ai.Ingredient.Id,
+                Quantity = ai.Quantity
+            })
+            .ToList();
+
+        await _menuService.UpdateMenuItemIngredientsAsync(menuItemId, selectedIngredients);
     }
 
     private void ShowErrorToast(string message)

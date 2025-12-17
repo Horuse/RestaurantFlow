@@ -92,6 +92,10 @@ public class RestaurantDbContext : DbContext
             .HasMaxLength(200)
             .IsRequired();
             
+        // Ігноруємо обчислювану властивість
+        modelBuilder.Entity<MenuItem>()
+            .Ignore(m => m.IsCurrentlyAvailable);
+            
         modelBuilder.Entity<Ingredient>()
             .Property(i => i.Name)
             .HasMaxLength(100)

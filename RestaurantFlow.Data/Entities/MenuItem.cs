@@ -20,4 +20,7 @@ public class MenuItem
     public Category Category { get; set; } = null!;
     public ICollection<MenuItemIngredient> MenuItemIngredients { get; set; } = new List<MenuItemIngredient>();
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    
+    // Computed property - не зберігається в базі
+    public bool IsCurrentlyAvailable { get; set; } = true;
 }

@@ -8,6 +8,7 @@ public record MenuItemResponse(
     string Description,
     decimal Price,
     bool IsAvailable,
+    bool IsCurrentlyAvailable,
     int EstimatedCookingTimeMinutes,
     int CategoryId,
     string CategoryName

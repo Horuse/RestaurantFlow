@@ -70,4 +70,31 @@ public class MenuRepository : Repository<MenuItem>, IMenuRepository
     {
         return await _context.Categories.FindAsync(id);
     }
+
+    public async Task<List<MenuItemIngredient>> GetMenuItemIngredientsAsync(int menuItemId)
+    {
+        return await _context.MenuItemIngredients
+            .Include(mii => mii.Ingredient)
+            .Where(mii => mii.MenuItemId == menuItemId)
+            .ToListAsync();
+    }
+
+    public async Task UpdateMenuItemIngredientsAsync(int menuItemId, List<MenuItemIngredient> ingredients)
+    {
+        // Видаляємо старі інгредієнти
+        var existingIngredients = await _context.MenuItemIngredients
+            .Where(mii => mii.MenuItemId == menuItemId)
+            .ToListAsync();
+        
+        _context.MenuItemIngredients.RemoveRange(existingIngredients);
+
+        // Додаємо нові інгредієнти
+        foreach (var ingredient in ingredients)
+        {
+            ingredient.MenuItemId = menuItemId;
+            _context.MenuItemIngredients.Add(ingredient);
+        }
+
+        await _context.SaveChangesAsync();
+    }
 }

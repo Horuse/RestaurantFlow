@@ -14,4 +14,6 @@ public interface IMenuRepository : IRepository<MenuItem>
     Task<Category> UpdateCategoryAsync(Category category);
     Task DeleteCategoryAsync(int id);
     Task<Category?> GetCategoryByIdAsync(int id);
+    Task<List<MenuItemIngredient>> GetMenuItemIngredientsAsync(int menuItemId);
+    Task UpdateMenuItemIngredientsAsync(int menuItemId, List<MenuItemIngredient> ingredients);
 }

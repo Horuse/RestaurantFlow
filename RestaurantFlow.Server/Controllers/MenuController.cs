@@ -32,6 +32,7 @@ public class MenuController : ControllerBase
             item.Description,
             item.Price,
             item.IsAvailable,
+            item.IsCurrentlyAvailable,
             item.EstimatedCookingTimeMinutes,
             item.CategoryId,
             item.Category?.Name ?? ""
@@ -61,12 +62,16 @@ public class MenuController : ControllerBase
         if (item == null)
             return NotFound();
 
+        // Перевіряємо доступність для окремого айтема
+        item.IsCurrentlyAvailable = item.IsAvailable && await _menuService.IsMenuItemAvailableAsync(item.Id);
+        
         var response = new MenuItemResponse(
             item.Id,
             item.Name,
             item.Description,
             item.Price,
             item.IsAvailable,
+            item.IsCurrentlyAvailable,
             item.EstimatedCookingTimeMinutes,
             item.CategoryId,
             item.Category?.Name ?? ""
@@ -94,12 +99,15 @@ public class MenuController : ControllerBase
         var created = await _menuService.CreateMenuItemAsync(menuItem);
         await _notificationService.NotifyMenuUpdated();
 
+        created.IsCurrentlyAvailable = created.IsAvailable && await _menuService.IsMenuItemAvailableAsync(created.Id);
+        
         var response = new MenuItemResponse(
             created.Id,
             created.Name,
             created.Description,
             created.Price,
             created.IsAvailable,
+            created.IsCurrentlyAvailable,
             created.EstimatedCookingTimeMinutes,
             created.CategoryId,
             created.Category?.Name ?? ""
@@ -128,12 +136,15 @@ public class MenuController : ControllerBase
         var updated = await _menuService.UpdateMenuItemAsync(existingItem);
         await _notificationService.NotifyMenuUpdated();
 
+        updated.IsCurrentlyAvailable = updated.IsAvailable && await _menuService.IsMenuItemAvailableAsync(updated.Id);
+
         var response = new MenuItemResponse(
             updated.Id,
             updated.Name,
             updated.Description,
             updated.Price,
             updated.IsAvailable,
+            updated.IsCurrentlyAvailable,
             updated.EstimatedCookingTimeMinutes,
             updated.CategoryId,
             updated.Category?.Name ?? ""
