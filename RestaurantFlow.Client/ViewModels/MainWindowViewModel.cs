@@ -50,6 +50,9 @@ public partial class MainWindowViewModel : ViewModelBase
     
     [Reactive]
     private bool _hasTableSetup = false;
+    
+    [Reactive]
+    private string _searchText = "";
 
     public CartService CartService { get; }
     
@@ -86,6 +89,9 @@ public partial class MainWindowViewModel : ViewModelBase
         OrderSuccessViewModel.TimerExpired += () => ShowMenuView();
         
         this.WhenAnyValue(x => x.SelectedCategory)
+            .Subscribe(_ => FilterMenuItems());
+            
+        this.WhenAnyValue(x => x.SearchText)
             .Subscribe(_ => FilterMenuItems());
 
         this.WhenAnyValue(x => x.TableNumberText)
@@ -157,6 +163,13 @@ public partial class MainWindowViewModel : ViewModelBase
         var itemsToShow = SelectedCategory?.Id == 0 || SelectedCategory == null
             ? MenuItems.Where(item => item.IsAvailable)
             : MenuItems.Where(item => item.IsAvailable && item.CategoryId == SelectedCategory.Id);
+            
+        if (!string.IsNullOrWhiteSpace(SearchText))
+        {
+            itemsToShow = itemsToShow.Where(item => 
+                item.Name.ToLowerInvariant().Contains(SearchText.ToLowerInvariant()) ||
+                item.Description.ToLowerInvariant().Contains(SearchText.ToLowerInvariant()));
+        }
             
         foreach (var item in itemsToShow)
         {

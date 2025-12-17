@@ -15,11 +15,9 @@
     </Design.DataContext>
 
     <Grid>
-        <!-- Header -->
         <Border Height="80" VerticalAlignment="Top" Background="#DA291C" 
                 CornerRadius="0,0,20,20" ZIndex="10">
             <Grid ColumnDefinitions="Auto,*,Auto" Margin="30,0">
-                <!-- Categories -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" 
                             VerticalAlignment="Center" Spacing="15"
                             IsVisible="{Binding IsMenuView}">
@@ -52,8 +50,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </StackPanel>
-
-                <!-- Back Button (visible only in cart view) -->
+                
                 <Button Grid.Column="0" 
                         VerticalAlignment="Center"
                         Background="Transparent"
@@ -73,11 +70,20 @@
                         </Style>
                     </Button.Styles>
                 </Button>
-
-                <!-- Title -->
-                <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10">
                     <TextBlock Text="🍔 McDonald's" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"
                                IsVisible="{Binding IsMenuView}"/>
+                    <TextBox Text="{Binding SearchText}" 
+                             Watermark="Пошук страв..." 
+                             FontSize="14"
+                             Width="300"
+                             Padding="10,8"
+                             CornerRadius="20"
+                             BorderThickness="0"
+                             Background="White"
+                             Foreground="#333"
+                             IsVisible="{Binding IsMenuView}"/>
                     <TextBlock Text="🛒 Ваш кошик" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"
                                IsVisible="{Binding IsCartView}"/>
                     <TextBlock Text="{Binding CartService.TotalItems, StringFormat='{}{0} товарів'}" 

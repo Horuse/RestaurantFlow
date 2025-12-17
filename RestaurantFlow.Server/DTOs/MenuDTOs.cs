@@ -12,7 +12,12 @@ public record MenuItemResponse(
     int EstimatedCookingTimeMinutes,
     int CategoryId,
     string CategoryName,
-    bool HasImage
+    bool HasImage,
+    int Calories,
+    string Allergens,
+    bool IsPopular,
+    bool IsRecommended,
+    string Ingredients
 );
 
 public record CategoryResponse(

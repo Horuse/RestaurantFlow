@@ -94,6 +94,15 @@ public class MenuService : IMenuService
     {
         return await _menuRepository.GetMenuItemIngredientsAsync(menuItemId);
     }
+    
+    public async Task<string> GetFormattedIngredientsAsync(int menuItemId)
+    {
+        var ingredients = await GetMenuItemIngredientsAsync(menuItemId);
+        if (!ingredients.Any())
+            return "";
+            
+        return string.Join(", ", ingredients.Select(i => i.Ingredient?.Name ?? "").Where(name => !string.IsNullOrEmpty(name)));
+    }
 
     public async Task UpdateMenuItemIngredientsAsync(int menuItemId, List<MenuItemIngredient> ingredients)
     {

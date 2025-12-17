@@ -26,18 +26,29 @@ public class MenuController : ControllerBase
     public async Task<ActionResult<List<MenuItemResponse>>> GetMenuItems()
     {
         var items = await _menuService.GetMenuItemsAsync();
-        var response = items.Select(item => new MenuItemResponse(
-            item.Id,
-            item.Name,
-            item.Description,
-            item.Price,
-            item.IsAvailable,
-            item.IsCurrentlyAvailable,
-            item.EstimatedCookingTimeMinutes,
-            item.CategoryId,
-            item.Category?.Name ?? "",
-            item.Image != null
-        )).ToList();
+        var response = new List<MenuItemResponse>();
+        
+        foreach (var item in items)
+        {
+            var ingredients = await _menuService.GetFormattedIngredientsAsync(item.Id);
+            response.Add(new MenuItemResponse(
+                item.Id,
+                item.Name,
+                item.Description,
+                item.Price,
+                item.IsAvailable,
+                item.IsCurrentlyAvailable,
+                item.EstimatedCookingTimeMinutes,
+                item.CategoryId,
+                item.Category?.Name ?? "",
+                item.Image != null,
+                item.Calories,
+                item.Allergens,
+                item.IsPopular,
+                item.IsRecommended,
+                ingredients
+            ));
+        }
 
         return Ok(response);
     }
@@ -66,6 +77,8 @@ public class MenuController : ControllerBase
         // Перевіряємо доступність для окремого айтема
         item.IsCurrentlyAvailable = item.IsAvailable && await _menuService.IsMenuItemAvailableAsync(item.Id);
         
+        var ingredients = await _menuService.GetFormattedIngredientsAsync(item.Id);
+        
         var response = new MenuItemResponse(
             item.Id,
             item.Name,
@@ -76,7 +89,12 @@ public class MenuController : ControllerBase
             item.EstimatedCookingTimeMinutes,
             item.CategoryId,
             item.Category?.Name ?? "",
-            item.Image != null
+            item.Image != null,
+            item.Calories,
+            item.Allergens,
+            item.IsPopular,
+            item.IsRecommended,
+            ingredients
         );
 
         return Ok(response);
@@ -103,6 +121,8 @@ public class MenuController : ControllerBase
 
         created.IsCurrentlyAvailable = created.IsAvailable && await _menuService.IsMenuItemAvailableAsync(created.Id);
         
+        var ingredients = await _menuService.GetFormattedIngredientsAsync(created.Id);
+        
         var response = new MenuItemResponse(
             created.Id,
             created.Name,
@@ -113,7 +133,12 @@ public class MenuController : ControllerBase
             created.EstimatedCookingTimeMinutes,
             created.CategoryId,
             created.Category?.Name ?? "",
-            created.Image != null
+            created.Image != null,
+            created.Calories,
+            created.Allergens,
+            created.IsPopular,
+            created.IsRecommended,
+            ingredients
         );
 
         return CreatedAtAction(nameof(GetMenuItem), new { id = created.Id }, response);
@@ -141,6 +166,8 @@ public class MenuController : ControllerBase
 
         updated.IsCurrentlyAvailable = updated.IsAvailable && await _menuService.IsMenuItemAvailableAsync(updated.Id);
 
+        var ingredients = await _menuService.GetFormattedIngredientsAsync(updated.Id);
+
         var response = new MenuItemResponse(
             updated.Id,
             updated.Name,
@@ -151,7 +178,12 @@ public class MenuController : ControllerBase
             updated.EstimatedCookingTimeMinutes,
             updated.CategoryId,
             updated.Category?.Name ?? "",
-            updated.Image != null
+            updated.Image != null,
+            updated.Calories,
+            updated.Allergens,
+            updated.IsPopular,
+            updated.IsRecommended,
+            ingredients
         );
 
         return Ok(response);

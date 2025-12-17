@@ -145,6 +145,10 @@
             <StackPanel Spacing="12">
                 <CheckBox Content="Доступна для замовлення" 
                          IsChecked="{Binding IsAvailable, Mode=TwoWay}"/>
+                <CheckBox Content="Популярна страва" 
+                         IsChecked="{Binding IsPopular, Mode=TwoWay}"/>
+                <CheckBox Content="Рекомендована страва" 
+                         IsChecked="{Binding IsRecommended, Mode=TwoWay}"/>
             </StackPanel>
         </StackPanel>
         

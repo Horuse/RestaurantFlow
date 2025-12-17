@@ -20,6 +20,7 @@ public interface IMenuService
     Task DeleteCategoryAsync(int id);
     Task<List<TopSellingMenuItem>> GetTopSellingItemsAsync(DateTime startDate, DateTime endDate, int limit);
     Task<List<MenuItemIngredient>> GetMenuItemIngredientsAsync(int menuItemId);
+    Task<string> GetFormattedIngredientsAsync(int menuItemId);
     Task UpdateMenuItemIngredientsAsync(int menuItemId, List<MenuItemIngredient> ingredients);
     Task<bool> IsMenuItemAvailableAsync(int menuItemId);
 }

@@ -14,7 +14,24 @@ public class MenuItemModel
     public int CategoryId { get; set; }
     public string CategoryName { get; set; } = "";
     public bool HasImage { get; set; }
+    public int Calories { get; set; }
+    public string Allergens { get; set; } = "";
+    public bool IsPopular { get; set; }
+    public bool IsRecommended { get; set; }
+    public string Ingredients { get; set; } = "";
+    
     public string ImageUrl => HasImage ? $"http://localhost:5000/api/menu/items/{Id}/image" : "";
+    
+    public string FormattedCookingTime => EstimatedCookingTimeMinutes > 0 ? 
+        $"~{EstimatedCookingTimeMinutes} хв" : "";
+    
+    public string FormattedCalories => Calories > 0 ? 
+        $"{Calories} ккал" : "";
+    
+    public bool HasIngredients => !string.IsNullOrWhiteSpace(Ingredients);
+    public bool HasAllergens => !string.IsNullOrWhiteSpace(Allergens);
+    public bool HasCalories => Calories > 0;
+    public bool HasCookingTime => EstimatedCookingTimeMinutes > 0;
 }
 
 public class CategoryModel

@@ -28,7 +28,6 @@
                         >
                         <shadui:Card.Header>
                             <StackPanel Spacing="8">
-                                <!-- Item Image or Placeholder -->
                                 <Border 
                                         Height="150" 
                                         CornerRadius="8"
@@ -46,6 +45,31 @@
                                                    HorizontalAlignment="Center" 
                                                    VerticalAlignment="Center"
                                                    IsVisible="{Binding !HasImage}"/>
+                                        
+                                        <StackPanel Orientation="Horizontal" 
+                                                    HorizontalAlignment="Right" 
+                                                    VerticalAlignment="Top" 
+                                                    Margin="8" 
+                                                    Spacing="4">
+                                            <Border Background="#FF4444" 
+                                                    CornerRadius="12" 
+                                                    Padding="6,4"
+                                                    IsVisible="{Binding IsPopular}">
+                                                <TextBlock Text="Популярне" 
+                                                          Foreground="White" 
+                                                          FontSize="10" 
+                                                          FontWeight="Bold"/>
+                                            </Border>
+                                            <Border Background="#4CAF50" 
+                                                    CornerRadius="12" 
+                                                    Padding="6,4"
+                                                    IsVisible="{Binding IsRecommended}">
+                                                <TextBlock Text="Рекомендуємо" 
+                                                          Foreground="White" 
+                                                          FontSize="10" 
+                                                          FontWeight="Bold"/>
+                                            </Border>
+                                        </StackPanel>
                                     </Panel>
                                 </Border>
                                 
@@ -55,6 +79,42 @@
                                 <shadui:CardDescription HorizontalAlignment="Center">
                                     <TextBlock Text="{Binding Description}" TextWrapping="Wrap"/>
                                 </shadui:CardDescription>
+                                
+                               
+                                <StackPanel Spacing="4" Margin="8,0">
+                           
+                                    <TextBlock Text="{Binding Ingredients, StringFormat='Інгредієнти: {0}'}" 
+                                              FontSize="11" 
+                                              Foreground="#666"
+                                              TextWrapping="Wrap"
+                                              IsVisible="{Binding HasIngredients}"/>
+                                    
+                                    <TextBlock Text="{Binding Allergens, StringFormat='Алергени: {0}'}" 
+                                              FontSize="11" 
+                                              Foreground="#FF6600"
+                                              TextWrapping="Wrap"
+                                              IsVisible="{Binding HasAllergens}"/>
+                                    
+                                    <StackPanel Orientation="Horizontal" 
+                                                HorizontalAlignment="Center" 
+                                                Spacing="15">
+                                        <StackPanel Orientation="Horizontal" Spacing="4"
+                                                   IsVisible="{Binding HasCalories}">
+                                            <TextBlock Text="{Binding FormattedCalories}" 
+                                                      FontSize="11" 
+                                                      FontWeight="Medium"
+                                                      Foreground="#666"/>
+                                        </StackPanel>
+                                        
+                                        <StackPanel Orientation="Horizontal" Spacing="4"
+                                                   IsVisible="{Binding HasCookingTime}">
+                                            <TextBlock Text="{Binding FormattedCookingTime}" 
+                                                      FontSize="11" 
+                                                      FontWeight="Medium"
+                                                      Foreground="#666"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
                             </StackPanel>
                         </shadui:Card.Header>
                         
