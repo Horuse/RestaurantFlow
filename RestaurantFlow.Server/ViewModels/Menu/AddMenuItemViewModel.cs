@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using RestaurantFlow.Server.Services;
 using RestaurantFlow.Data.Entities;
 using ShadUI;
+using System.IO;
+using Avalonia.Platform.Storage;
 
 namespace RestaurantFlow.Server.ViewModels.Menu;
 
@@ -82,6 +84,12 @@ public partial class AddMenuItemViewModel : ReactiveObject
     [Reactive]
     private string _submitText = "Додати";
 
+    [Reactive]
+    private byte[]? _imageData;
+
+    [Reactive]
+    private string? _imagePath;
+
     public ObservableCollection<Category> Categories { get; } = new();
     public ObservableCollection<IngredientSelectionItem> AvailableIngredients { get; } = new();
 
@@ -122,6 +130,8 @@ public partial class AddMenuItemViewModel : ReactiveObject
             IsRecommended = menuItem.IsRecommended;
             IsAvailable = menuItem.IsAvailable;
             SelectedCategory = Categories.FirstOrDefault(c => c.Id == menuItem.CategoryId);
+            ImageData = menuItem.Image;
+            ImagePath = menuItem.Image != null ? "Завантажено зображення" : null;
 
             // Завантажуємо інгредієнти страви
             var menuItemIngredients = await _menuService.GetMenuItemIngredientsAsync(menuItemId);
@@ -215,6 +225,7 @@ public partial class AddMenuItemViewModel : ReactiveObject
                     menuItem.IsAvailable = IsAvailable;
                     menuItem.CategoryId = SelectedCategory.Id;
                     menuItem.UpdatedAt = DateTime.UtcNow;
+                    menuItem.Image = ImageData;
 
                     await _menuService.UpdateMenuItemAsync(menuItem);
                     
@@ -239,7 +250,8 @@ public partial class AddMenuItemViewModel : ReactiveObject
                     IsRecommended = IsRecommended,
                     IsAvailable = IsAvailable,
                     CategoryId = SelectedCategory.Id,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow,
+                    Image = ImageData
                 };
 
                 var createdMenuItem = await _menuService.CreateMenuItemAsync(newMenuItem);
@@ -264,6 +276,54 @@ public partial class AddMenuItemViewModel : ReactiveObject
     private void Cancel()
     {
         _dialogManager.Close(this, new CloseDialogOptions { Success = false });
+    }
+
+    [ReactiveCommand]
+    private async Task SelectImageAsync()
+    {
+        var topLevel = App.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+            ? desktop.MainWindow
+            : null;
+
+        if (topLevel?.StorageProvider is not { } storageProvider)
+            return;
+
+        var files = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = "Оберіть зображення",
+            AllowMultiple = false,
+            FileTypeFilter = new[]
+            {
+                new FilePickerFileType("Зображення")
+                {
+                    Patterns = new[] { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp" }
+                }
+            }
+        });
+
+        if (files.Count > 0)
+        {
+            var file = files[0];
+            try
+            {
+                await using var stream = await file.OpenReadAsync();
+                using var memoryStream = new MemoryStream();
+                await stream.CopyToAsync(memoryStream);
+                ImageData = memoryStream.ToArray();
+                ImagePath = file.Name;
+            }
+            catch (Exception ex)
+            {
+                ShowErrorToast($"Помилка завантаження зображення: {ex.Message}");
+            }
+        }
+    }
+
+    [ReactiveCommand]
+    private void RemoveImage()
+    {
+        ImageData = null;
+        ImagePath = null;
     }
 
     private async Task SaveIngredientsAsync(int menuItemId)

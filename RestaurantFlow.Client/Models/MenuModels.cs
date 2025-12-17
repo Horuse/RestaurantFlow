@@ -13,7 +13,8 @@ public class MenuItemModel
     public int EstimatedCookingTimeMinutes { get; set; }
     public int CategoryId { get; set; }
     public string CategoryName { get; set; } = "";
-    public string ImageUrl => $"/api/menu/items/{Id}/image";
+    public bool HasImage { get; set; }
+    public string ImageUrl => HasImage ? $"http://localhost:5000/api/menu/items/{Id}/image" : "";
 }
 
 public class CategoryModel

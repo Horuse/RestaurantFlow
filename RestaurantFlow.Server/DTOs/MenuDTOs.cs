@@ -11,7 +11,8 @@ public record MenuItemResponse(
     bool IsCurrentlyAvailable,
     int EstimatedCookingTimeMinutes,
     int CategoryId,
-    string CategoryName
+    string CategoryName,
+    bool HasImage
 );
 
 public record CategoryResponse(

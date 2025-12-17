@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:RestaurantFlow.Client.ViewModels"
              xmlns:shadui="clr-namespace:ShadUI;assembly=ShadUI"
+             xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
              mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
              x:Class="RestaurantFlow.Client.Views.MenuView"
              x:DataType="vm:MainWindowViewModel">
@@ -27,15 +28,25 @@
                         >
                         <shadui:Card.Header>
                             <StackPanel Spacing="8">
-                                <!-- Item Image Placeholder -->
-                                <Border Background="#F5F5F5" 
+                                <!-- Item Image or Placeholder -->
+                                <Border 
                                         Height="150" 
                                         CornerRadius="8"
-                                        HorizontalAlignment="Stretch">
-                                    <TextBlock Text="🍔" 
-                                               FontSize="60" 
+                                        HorizontalAlignment="Stretch"
+                                        ClipToBounds="True">
+                                    <Panel>
+                                        <Image asyncImageLoader:ImageLoader.Source="{Binding ImageUrl}"
+                                               IsVisible="{Binding HasImage}"
                                                HorizontalAlignment="Center" 
-                                               VerticalAlignment="Center"/>
+                                               VerticalAlignment="Center">
+                                        </Image>
+                                        
+                                        <TextBlock Text="🍔" 
+                                                   FontSize="60" 
+                                                   HorizontalAlignment="Center" 
+                                                   VerticalAlignment="Center"
+                                                   IsVisible="{Binding !HasImage}"/>
+                                    </Panel>
                                 </Border>
                                 
                                 <shadui:CardTitle HorizontalAlignment="Center">

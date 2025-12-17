@@ -7,13 +7,14 @@
              x:Class="RestaurantFlow.Server.Views.Menu.AddMenuItemDialog"
              x:DataType="vm:AddMenuItemViewModel">
 
-    <StackPanel Spacing="24" Margin="24">
-        <StackPanel Spacing="8">
-            <TextBlock Text="{Binding Title}" FontSize="18" FontWeight="Bold" />
-            <TextBlock Text="Заповніть дані страви" FontSize="12" Foreground="#666666" />
-        </StackPanel>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="600">
+        <StackPanel Spacing="24" Margin="24">
+            <StackPanel Spacing="8">
+                <TextBlock Text="{Binding Title}" FontSize="18" FontWeight="Bold" />
+                <TextBlock Text="Заповніть дані страви" FontSize="12" Foreground="#666666" />
+            </StackPanel>
 
-        <StackPanel Spacing="16">
+            <StackPanel Spacing="16">
             <Grid ColumnDefinitions="* *" ColumnSpacing="16">
                 <StackPanel Grid.Column="0" Spacing="8">
                     <TextBlock Text="Назва страви" FontSize="12" />
@@ -38,6 +39,35 @@
                         Height="80"
                         AcceptsReturn="True"
                         TextWrapping="Wrap"/>
+            </StackPanel>
+
+
+            <StackPanel Spacing="8">
+                <TextBlock Text="Зображення страви" FontSize="12" />
+                    <StackPanel Spacing="12">
+                        <StackPanel Spacing="8" VerticalAlignment="Center"
+                                   IsVisible="{Binding ImageData, Converter={x:Static ObjectConverters.IsNull}}">
+                            <TextBlock Text="Зображення не обрано" FontSize="12" 
+                                      Foreground="#666666" HorizontalAlignment="Center" />
+                        </StackPanel>
+                        
+                        <StackPanel Spacing="4" VerticalAlignment="Center"
+                                   IsVisible="{Binding ImageData, Converter={x:Static ObjectConverters.IsNotNull}}">
+                            <TextBlock Text="✓" FontSize="24" HorizontalAlignment="Center" 
+                                      Foreground="Green" />
+                            <TextBlock Text="{Binding ImagePath}" FontSize="10" 
+                                      Foreground="#666666" HorizontalAlignment="Center"
+                                      TextTrimming="CharacterEllipsis" MaxWidth="200" />
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                            <Button Classes="Secondary" Content="Обрати зображення" 
+                                   Command="{Binding SelectImageCommand}" />
+                            <Button Classes="Secondary" Content="Видалити" 
+                                   Command="{Binding RemoveImageCommand}"
+                                   IsVisible="{Binding ImageData, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                        </StackPanel>
+                    </StackPanel>
             </StackPanel>
 
 
@@ -114,10 +144,6 @@
             <StackPanel Spacing="12">
                 <CheckBox Content="Доступна для замовлення" 
                          IsChecked="{Binding IsAvailable, Mode=TwoWay}"/>
-                <CheckBox Content="Популярна страва" 
-                         IsChecked="{Binding IsPopular, Mode=TwoWay}"/>
-                <CheckBox Content="Рекомендована страва" 
-                         IsChecked="{Binding IsRecommended, Mode=TwoWay}"/>
             </StackPanel>
         </StackPanel>
         
@@ -128,18 +154,17 @@
                         Height="4"
                         VerticalAlignment="Center" />
 
-            <Button Grid.Column="1" 
-                   Classes="btn btn-outline"
+            <Button Classes="Destructive" Grid.Column="1" 
                    Content="Скасувати"
                    Command="{Binding CancelCommand}"
                    Width="100" />
 
-            <Button Grid.Column="2" 
-                   Classes="btn btn-primary"
+            <Button Classes="Primary" Grid.Column="2" 
                    Content="{Binding SubmitText}"
                    Command="{Binding SubmitCommand}"
                    IsEnabled="{Binding !IsBusy}"
                    Width="100" />
-        </Grid>
-    </StackPanel>
+            </Grid>
+            </StackPanel>
+    </ScrollViewer>
 </UserControl>

@@ -35,7 +35,8 @@ public class MenuController : ControllerBase
             item.IsCurrentlyAvailable,
             item.EstimatedCookingTimeMinutes,
             item.CategoryId,
-            item.Category?.Name ?? ""
+            item.Category?.Name ?? "",
+            item.Image != null
         )).ToList();
 
         return Ok(response);
@@ -74,7 +75,8 @@ public class MenuController : ControllerBase
             item.IsCurrentlyAvailable,
             item.EstimatedCookingTimeMinutes,
             item.CategoryId,
-            item.Category?.Name ?? ""
+            item.Category?.Name ?? "",
+            item.Image != null
         );
 
         return Ok(response);
@@ -110,7 +112,8 @@ public class MenuController : ControllerBase
             created.IsCurrentlyAvailable,
             created.EstimatedCookingTimeMinutes,
             created.CategoryId,
-            created.Category?.Name ?? ""
+            created.Category?.Name ?? "",
+            created.Image != null
         );
 
         return CreatedAtAction(nameof(GetMenuItem), new { id = created.Id }, response);
@@ -147,7 +150,8 @@ public class MenuController : ControllerBase
             updated.IsCurrentlyAvailable,
             updated.EstimatedCookingTimeMinutes,
             updated.CategoryId,
-            updated.Category?.Name ?? ""
+            updated.Category?.Name ?? "",
+            updated.Image != null
         );
 
         return Ok(response);
@@ -164,5 +168,17 @@ public class MenuController : ControllerBase
         await _notificationService.NotifyMenuUpdated();
 
         return NoContent();
+    }
+
+    [HttpGet("items/{id}/image")]
+    public async Task<IActionResult> GetMenuItemImage(int id)
+    {
+        var menuItem = await _menuService.GetMenuItemByIdAsync(id);
+        if (menuItem?.Image == null)
+        {
+            return NotFound();
+        }
+
+        return File(menuItem.Image, "image/jpeg");
     }
 }
