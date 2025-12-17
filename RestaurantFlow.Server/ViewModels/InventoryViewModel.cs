@@ -5,12 +5,18 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using RestaurantFlow.Server.Services;
 using RestaurantFlow.Data.Entities;
+using RestaurantFlow.Server.ViewModels.Inventory;
+using ShadUI;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace RestaurantFlow.Server.ViewModels;
 
 public partial class InventoryViewModel : ReactiveObject
 {
     private readonly IInventoryService _inventoryService;
+    private readonly DialogManager _dialogManager;
+    private readonly ToastManager _toastManager;
+    private readonly IServiceProvider _serviceProvider;
     
     [Reactive]
     private ObservableCollection<Ingredient> _ingredients = new();
@@ -28,17 +34,17 @@ public partial class InventoryViewModel : ReactiveObject
     private bool _isLoading = false;
     
     [Reactive]
-    private bool _isEditing = false;
-    
-    [Reactive]
     private decimal _stockAdjustment = 0;
     
     [Reactive]
     private string _adjustmentReason = "";
 
-    public InventoryViewModel(IInventoryService inventoryService)
+    public InventoryViewModel(IInventoryService inventoryService, DialogManager dialogManager, ToastManager toastManager, IServiceProvider serviceProvider)
     {
         _inventoryService = inventoryService;
+        _dialogManager = dialogManager;
+        _toastManager = toastManager;
+        _serviceProvider = serviceProvider;
         
         // Load data when ViewModel is created
         _ = LoadDataAsync();
@@ -85,57 +91,63 @@ public partial class InventoryViewModel : ReactiveObject
     }
     
     [ReactiveCommand]
-    private void AddNewIngredient()
+    private async Task AddNewIngredient()
     {
-        SelectedIngredient = new Ingredient
-        {
-            Name = "",
-            Unit = "",
-            CurrentStock = 0,
-            MinimumStock = 0,
-            IsActive = true
-        };
-        IsEditing = true;
-    }
-    
-    [ReactiveCommand]
-    private void EditIngredient(Ingredient ingredient)
-    {
-        SelectedIngredient = ingredient;
-        IsEditing = true;
-    }
-    
-    [ReactiveCommand]
-    private async Task SaveIngredient()
-    {
-        if (SelectedIngredient == null) return;
+        System.Console.WriteLine("AddNewIngredient method called!");
         
         try
         {
-            if (SelectedIngredient.Id == 0)
-            {
-                await _inventoryService.CreateIngredientAsync(SelectedIngredient);
-            }
-            else
-            {
-                await _inventoryService.UpdateIngredientAsync(SelectedIngredient);
-            }
+            System.Console.WriteLine("Getting AddIngredientViewModel from DI...");
+            var addIngredientVm = _serviceProvider.GetRequiredService<AddIngredientViewModel>();
+            System.Console.WriteLine("AddIngredientViewModel retrieved successfully");
             
-            await LoadDataAsync();
-            IsEditing = false;
-            SelectedIngredient = null;
+            System.Console.WriteLine("Initializing AddIngredientViewModel...");
+            addIngredientVm.Initialize();
+            System.Console.WriteLine("AddIngredientViewModel initialized");
+            
+            System.Console.WriteLine("Creating dialog...");
+            _dialogManager.CreateDialog(addIngredientVm)
+                .Dismissible()
+                .WithSuccessCallback(async _ =>
+                {
+                    System.Console.WriteLine("Dialog success callback triggered");
+                    await LoadDataAsync();
+                })
+                .Show();
+            System.Console.WriteLine("Dialog shown successfully");
         }
         catch (Exception ex)
         {
+            System.Console.WriteLine($"Error in AddNewIngredient: {ex.Message}");
+            System.Console.WriteLine($"Stack trace: {ex.StackTrace}");
         }
     }
     
     [ReactiveCommand]
-    private void CancelEdit()
+    private async Task EditIngredient(Ingredient ingredient)
     {
-        IsEditing = false;
-        SelectedIngredient = null;
+        System.Console.WriteLine($"EditIngredient called for: {ingredient.Name}");
+        
+        try
+        {
+            var addIngredientVm = _serviceProvider.GetRequiredService<AddIngredientViewModel>();
+            await addIngredientVm.InitializeForEdit(ingredient.Id);
+            
+            _dialogManager.CreateDialog(addIngredientVm)
+                .Dismissible()
+                .WithSuccessCallback(async _ =>
+                {
+                    System.Console.WriteLine("EditIngredient dialog success callback triggered");
+                    await LoadDataAsync();
+                })
+                .Show();
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine($"Error in EditIngredient: {ex.Message}");
+        }
     }
+    
     
     [ReactiveCommand]
     private async Task DeleteIngredient(Ingredient ingredient)

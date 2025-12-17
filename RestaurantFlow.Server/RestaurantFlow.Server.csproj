@@ -48,4 +48,10 @@
     <ItemGroup>
       <None Include="Styles\Index.axaml" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Views\Inventory\AddIngredientDialog.axaml.cs">
+        <DependentUpon>AddIngredientDialog.axaml</DependentUpon>
+      </Compile>
+    </ItemGroup>
 </Project>

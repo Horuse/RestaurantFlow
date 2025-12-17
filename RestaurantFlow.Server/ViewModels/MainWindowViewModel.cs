@@ -2,6 +2,7 @@ using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System.Reactive;
 using System;
+using ShadUI;
 
 namespace RestaurantFlow.Server.ViewModels;
 
@@ -21,21 +22,25 @@ public partial class MainWindowViewModel : ReactiveObject
     
     public ReactiveCommand<string, Unit> NavigateToCommand { get; }
     
-    public object? DialogManager => null;
-    public object? ToastManager => null;
+    public DialogManager DialogManager { get; }
+    public ToastManager ToastManager { get; }
 
     public MainWindowViewModel(
         KitchenViewModel kitchenViewModel,
         CounterViewModel counterViewModel,
         MenuViewModel menuViewModel,
         InventoryViewModel inventoryViewModel,
-        AnalyticsViewModel analyticsViewModel)
+        AnalyticsViewModel analyticsViewModel,
+        DialogManager dialogManager,
+        ToastManager toastManager)
     {
         KitchenViewModel = kitchenViewModel;
         CounterViewModel = counterViewModel;
         MenuViewModel = menuViewModel;
         InventoryViewModel = inventoryViewModel;
         AnalyticsViewModel = analyticsViewModel;
+        DialogManager = dialogManager;
+        ToastManager = toastManager;
 
         NavigateToCommand = ReactiveCommand.Create<string>(NavigateTo);
 

@@ -155,7 +155,6 @@
                                             <TextBlock Text="{Binding TableInfo}" Classes="Caption Muted"/>
                                             <TextBlock Text="{Binding ItemsDescription}" Classes="Small Muted" TextWrapping="Wrap"/>
                                             <TextBlock Text="{Binding ReadyTime}" Classes="Caption Muted" FontWeight="SemiBold"/>
-                                            <TextBlock Text="{Binding CookingTime}" Classes="Caption Muted"/>
                                         </StackPanel>
                                     </shadui:Card>
                                 </DataTemplate>

@@ -23,6 +23,11 @@ public class InventoryService : IInventoryService
         return await _inventoryRepository.GetActiveIngredientsAsync();
     }
     
+    public async Task<Ingredient?> GetIngredientByIdAsync(int id)
+    {
+        return await _inventoryRepository.GetByIdAsync(id);
+    }
+    
     public async Task<List<Ingredient>> GetLowStockIngredientsAsync()
     {
         return await _inventoryRepository.GetLowStockIngredientsAsync();

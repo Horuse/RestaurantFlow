@@ -83,6 +83,7 @@ public partial class App : Application
         services.AddTransient<AnalyticsViewModel>();
         
         services.AddTransient<ViewModels.Menu.AddMenuItemViewModel>();
+        services.AddTransient<ViewModels.Inventory.AddIngredientViewModel>();
         
         services.AddSingleton<DialogManager>();
         services.AddSingleton<ToastManager>();
@@ -99,6 +100,7 @@ public partial class App : Application
     {
         var dialogManager = serviceProvider.GetRequiredService<DialogManager>();
         dialogManager.Register<Views.Menu.AddMenuItemDialog, ViewModels.Menu.AddMenuItemViewModel>();
+        dialogManager.Register<Views.Inventory.AddIngredientDialog, ViewModels.Inventory.AddIngredientViewModel>();
     }
 
     private void DisableAvaloniaDataAnnotationValidation()

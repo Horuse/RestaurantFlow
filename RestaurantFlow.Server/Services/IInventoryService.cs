@@ -7,6 +7,7 @@ namespace RestaurantFlow.Server.Services;
 public interface IInventoryService
 {
     Task<List<Ingredient>> GetIngredientsAsync();
+    Task<Ingredient?> GetIngredientByIdAsync(int id);
     Task<List<Ingredient>> GetLowStockIngredientsAsync();
     Task<Ingredient> UpdateIngredientStockAsync(int ingredientId, decimal quantity, string reason);
     Task<List<InventoryLog>> GetInventoryLogsAsync(int? ingredientId = null);

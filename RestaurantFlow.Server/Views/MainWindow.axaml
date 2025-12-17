@@ -29,14 +29,14 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <Grid ColumnDefinitions="280,*">
+    <Grid ColumnDefinitions="250,*">
         <shadui:Sidebar 
             Grid.Column="0"
             Background="{DynamicResource CardBackgroundColor}"
             BorderThickness="0,0,1,0"
             BorderBrush="{DynamicResource BorderColor}"
             Padding="16"
-            MinWidth="280"
+            MinWidth="250"
             Expanded="True">
             
             <shadui:Sidebar.Header>

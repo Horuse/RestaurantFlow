@@ -13,75 +13,59 @@
             </StackPanel>
             
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                <Button Content="🔄 Оновити" 
+                <Button Content="Оновити" 
                        Command="{Binding RefreshDataCommand}"
-                       Classes="btn btn-secondary"/>
-                <Button Content="➕ Новий інгредієнт" 
+                       Classes="Secondary"/>
+                <Button Content="Новий інгредієнт" 
                        Command="{Binding AddNewIngredientCommand}"
-                       Classes="btn btn-primary"/>
+                       Classes="Secondary"/>
             </StackPanel>
         </Grid>
 
         
-        <Grid Grid.Row="1" ColumnDefinitions="2*,*" ColumnSpacing="20">
+        <Grid Grid.Row="1" ColumnDefinitions="2*,300" ColumnSpacing="20">
 
-            <Border Grid.Column="0" CornerRadius="8" Padding="20" BorderBrush="#E0E0E0" BorderThickness="1">
-                <Grid RowDefinitions="Auto,*">
-                    <TextBlock Grid.Row="0" Text="Інгредієнти" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,15"/>
-                    
-                    <DataGrid Grid.Row="1" 
-                             ItemsSource="{Binding Ingredients}" 
-                             SelectedItem="{Binding SelectedIngredient, Mode=TwoWay}"
-                             SelectionMode="Single" 
-                             IsReadOnly="True"
-                             GridLinesVisibility="Horizontal"
-                             HeadersVisibility="Column">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Назва" Binding="{Binding Name}" Width="*"/>
-                            <DataGridTextColumn Header="Одиниця" Binding="{Binding Unit}" Width="80"/>
-                            <DataGridTextColumn Header="Запас" Binding="{Binding CurrentStock, StringFormat=F2}" Width="80"/>
-                            <DataGridTextColumn Header="Мін." Binding="{Binding MinimumStock, StringFormat=F2}" Width="60"/>
-                            <DataGridTemplateColumn Header="Статус" Width="100">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Border Background="#28a745" 
-                                               CornerRadius="12" Padding="8,4" Margin="2">
-                                            <TextBlock Text="{Binding CurrentStock, StringFormat=F1}" 
-                                                      Foreground="White" 
-                                                      FontSize="12" 
-                                                      FontWeight="Medium"
-                                                      TextAlignment="Center"/>
-                                        </Border>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Дії" Width="120">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Spacing="5">
-                                            <Button Content="✏️" 
-                                                   Command="{Binding $parent[UserControl].((vm:InventoryViewModel)DataContext).EditIngredientCommand}" 
-                                                   CommandParameter="{Binding}"
-                                                   Classes="btn-small"/>
-                                            <Button Content="🗑️" 
-                                                   Command="{Binding $parent[UserControl].((vm:InventoryViewModel)DataContext).DeleteIngredientCommand}" 
-                                                   CommandParameter="{Binding}"
-                                                   Classes="btn-small btn-danger"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
-            </Border>
+            <Grid RowDefinitions="Auto,*">
+                <TextBlock Grid.Row="0" Text="Інгредієнти" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,15"/>
+                
+                <DataGrid Grid.Row="1" 
+                         ItemsSource="{Binding Ingredients}" 
+                         SelectedItem="{Binding SelectedIngredient, Mode=TwoWay}"
+                         SelectionMode="Single" 
+                         IsReadOnly="True"
+                         GridLinesVisibility="Horizontal"
+                         HeadersVisibility="Column">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Назва" Binding="{Binding Name}" Width="200"/>
+                        <DataGridTextColumn Header="Одиниця" Binding="{Binding Unit}" Width="80"/>
+                        <DataGridTextColumn Header="Запас" Binding="{Binding CurrentStock, StringFormat=F2}" Width="80"/>
+                        <DataGridTextColumn Header="Мін." Binding="{Binding MinimumStock, StringFormat=F2}" Width="60"/>
+                        <DataGridTemplateColumn Header="Дії" Width="220">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="5">
+                                        <Button Content="Ред." 
+                                               Command="{Binding $parent[UserControl].((vm:InventoryViewModel)DataContext).EditIngredientCommand}" 
+                                               CommandParameter="{Binding}"
+                                               Classes="Primary"/>
+                                        <Button Content="Видл." 
+                                               Command="{Binding $parent[UserControl].((vm:InventoryViewModel)DataContext).DeleteIngredientCommand}" 
+                                               CommandParameter="{Binding}"
+                                               Classes="Destructive"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
 
             
             <StackPanel Grid.Column="1" Spacing="20">
      
-                <Border Background="#fff3cd" CornerRadius="8" Padding="15" BorderBrush="#ffeaa7" BorderThickness="1">
+                <Border Background="#422006" CornerRadius="16" Padding="15" BorderBrush="#854d0e" BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="⚠️ Низькі запаси" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                        <TextBlock Text="Низькі запаси:" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
                         <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
                             <ItemsControl ItemsSource="{Binding LowStockIngredients}">
                                 <ItemsControl.ItemTemplate>
@@ -99,76 +83,9 @@
                         </ScrollViewer>
                     </StackPanel>
                 </Border>
-
-          
-                <Border CornerRadius="8" Padding="15" BorderBrush="#E0E0E0" BorderThickness="1">
-                    <StackPanel>
-                        <TextBlock Text="Коригування запасів" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,15"/>
-                        
-                        <TextBlock Text="Кількість:" FontSize="12" Margin="0,0,0,5"/>
-                        <NumericUpDown Value="{Binding StockAdjustment, Mode=TwoWay}" 
-                                      Minimum="-1000" Maximum="1000" 
-                                      Increment="1" FormatString="F2"
-                                      Margin="0,0,0,10"/>
-                        
-                        <TextBlock Text="Причина:" FontSize="12" Margin="0,0,0,5"/>
-                        <TextBox Text="{Binding AdjustmentReason, Mode=TwoWay}" 
-                                Watermark="Причина коригування..."
-                                Margin="0,0,0,15"/>
-                        
-                        <Button Content="Застосувати" 
-                               Command="{Binding AdjustStockCommand}" 
-                               CommandParameter="{Binding SelectedIngredient}"
-                               IsEnabled="{Binding SelectedIngredient, Converter={x:Static ObjectConverters.IsNotNull}}"
-                               Classes="btn btn-primary"
-                               HorizontalAlignment="Stretch"/>
-                    </StackPanel>
-                </Border>
             </StackPanel>
         </Grid>
         
-        <Border Grid.Row="2" 
-               CornerRadius="8" 
-               Padding="20" 
-               BorderBrush="#E0E0E0" 
-               BorderThickness="1"
-               Margin="0,20,0,0"
-               IsVisible="{Binding IsEditing}">
-            <Grid ColumnDefinitions="*,*,*,*,Auto" ColumnSpacing="15">
-                <StackPanel Grid.Column="0">
-                    <TextBlock Text="Назва:" FontSize="12" Margin="0,0,0,5"/>
-                    <TextBox Text="{Binding SelectedIngredient.Name, Mode=TwoWay}" 
-                            Watermark="Назва інгредієнта"/>
-                </StackPanel>
-                
-                <StackPanel Grid.Column="1">
-                    <TextBlock Text="Одиниця:" FontSize="12" Margin="0,0,0,5"/>
-                    <TextBox Text="{Binding SelectedIngredient.Unit, Mode=TwoWay}" 
-                            Watermark="кг, л, шт"/>
-                </StackPanel>
-                
-                <StackPanel Grid.Column="2">
-                    <TextBlock Text="Поточний запас:" FontSize="12" Margin="0,0,0,5"/>
-                    <NumericUpDown Value="{Binding SelectedIngredient.CurrentStock, Mode=TwoWay}" 
-                                  Minimum="0" Maximum="10000" Increment="0.1" FormatString="F2"/>
-                </StackPanel>
-                
-                <StackPanel Grid.Column="3">
-                    <TextBlock Text="Мін. запас:" FontSize="12" Margin="0,0,0,5"/>
-                    <NumericUpDown Value="{Binding SelectedIngredient.MinimumStock, Mode=TwoWay}" 
-                                  Minimum="0" Maximum="1000" Increment="0.1" FormatString="F2"/>
-                </StackPanel>
-                
-                <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="10" VerticalAlignment="Bottom">
-                    <Button Content="💾 Зберегти" 
-                           Command="{Binding SaveIngredientCommand}"
-                           Classes="btn btn-primary"/>
-                    <Button Content="❌ Скасувати" 
-                           Command="{Binding CancelEditCommand}"
-                           Classes="btn btn-secondary"/>
-                </StackPanel>
-            </Grid>
-        </Border>
 
  
         <Border Grid.RowSpan="3" 
