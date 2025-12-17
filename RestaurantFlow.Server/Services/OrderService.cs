@@ -13,10 +13,14 @@ namespace RestaurantFlow.Server.Services;
 public class OrderService : IOrderService
 {
     private readonly IOrderRepository _orderRepository;
+    private readonly IInventoryService _inventoryService;
+    private readonly IMenuService _menuService;
     
-    public OrderService(IOrderRepository orderRepository)
+    public OrderService(IOrderRepository orderRepository, IInventoryService inventoryService, IMenuService menuService)
     {
         _orderRepository = orderRepository;
+        _inventoryService = inventoryService;
+        _menuService = menuService;
     }
     
     public async Task<List<Order>> GetAllOrdersAsync()
@@ -51,7 +55,42 @@ public class OrderService : IOrderService
     
     public async Task<Order> CreateOrderAsync(Order order)
     {
-        return await _orderRepository.AddAsync(order);
+        // Спочатку створюємо замовлення
+        var createdOrder = await _orderRepository.AddAsync(order);
+        
+        // Потім зменшуємо запаси інгредієнтів для кожного айтему
+        foreach (var orderItem in createdOrder.OrderItems)
+        {
+            await DeductIngredientStockAsync(orderItem.MenuItemId, orderItem.Quantity, createdOrder.OrderNumber);
+        }
+        
+        return createdOrder;
+    }
+    
+    private async Task DeductIngredientStockAsync(int menuItemId, int quantity, string orderNumber)
+    {
+        try
+        {
+            // Отримуємо всі інгредієнти для цієї страви
+            var menuItemIngredients = await _menuService.GetMenuItemIngredientsAsync(menuItemId);
+            
+            foreach (var mii in menuItemIngredients)
+            {
+                // Розраховуємо скільки інгредієнта потрібно для кількості порцій
+                var requiredQuantity = mii.Quantity * quantity;
+                
+                // Зменшуємо запас інгредієнта
+                await _inventoryService.UpdateIngredientStockAsync(
+                    mii.IngredientId, 
+                    -requiredQuantity, 
+                    $"Використано для замовлення #{orderNumber}: {quantity}x {mii.MenuItem?.Name ?? "Страва"}"
+                );
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine($"Помилка при зменшенні запасів для MenuItemId {menuItemId}: {ex.Message}");
+        }
     }
     
     public async Task UpdateOrderStatusAsync(int orderId, OrderStatus status)

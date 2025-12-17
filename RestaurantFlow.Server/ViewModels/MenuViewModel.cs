@@ -16,6 +16,7 @@ public partial class MenuViewModel : ReactiveObject
     private readonly IMenuService _menuService;
     private readonly DialogManager _dialogManager;
     private readonly IServiceProvider _serviceProvider;
+    private readonly ISignalRConnectionService _signalRService;
     
     [Reactive]
     private ObservableCollection<MenuItem> _menuItems = new();
@@ -29,18 +30,27 @@ public partial class MenuViewModel : ReactiveObject
     [Reactive]
     private string _searchText = "";
 
-    public MenuViewModel(IMenuService menuService, DialogManager dialogManager, IServiceProvider serviceProvider)
+    public MenuViewModel(IMenuService menuService, DialogManager dialogManager, IServiceProvider serviceProvider, ISignalRConnectionService signalRService)
     {
         _menuService = menuService;
         _dialogManager = dialogManager;
         _serviceProvider = serviceProvider;
+        _signalRService = signalRService;
+        
+        // Підписуємося на оновлення меню
+        _signalRService.MenuUpdated += OnMenuUpdated;
         
         // Load data when ViewModel is created
         _ = LoadDataAsync();
-        
-        // Filter when search text changes
-        this.WhenAnyValue(x => x.SearchText)
-            .Subscribe(_ => FilterMenuItems());
+    }
+    
+    private async void OnMenuUpdated()
+    {
+        // Оновлюємо дані при отриманні SignalR повідомлення в UI потоці
+        await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(async () =>
+        {
+            await LoadDataAsync();
+        });
     }
     
     private void FilterMenuItems()

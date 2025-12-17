@@ -27,16 +27,10 @@
                         </shadui:ButtonAssist.Icon>
                     </Button>
                     
-                    <Button Classes="btn btn-success" 
-                            Content="➕ Додати страву"
+                    <Button Classes="Primary" 
+                            Content="Додати страву"
                             Command="{Binding AddNewMenuItemCommand}"/>
                 </StackPanel>
-
-                <TextBox Grid.Column="1"
-                         Width="250" 
-                         Watermark="Пошук страв..."
-                         Text="{Binding SearchText}">
-                </TextBox>
             </Grid>
             
             <DataGrid CanUserReorderColumns="False"
@@ -44,7 +38,6 @@
                       GridLinesVisibility="Horizontal"
                       ItemsSource="{Binding MenuItems}"
                       SelectionMode="Single"
-                      BorderBrush="#dee2e6"
                       BorderThickness="1"
                       CornerRadius="8">
                 
@@ -119,12 +112,6 @@
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
-            
-            <TextBlock HorizontalAlignment="Center" Foreground="#666666">
-                <Run Text="{Binding MenuItems.Count}" />
-                <Run Text="страв у меню" />
-            </TextBlock>
-
             
             <Border IsVisible="{Binding IsLoading}" 
                     CornerRadius="8"

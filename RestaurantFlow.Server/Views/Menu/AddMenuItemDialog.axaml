@@ -83,7 +83,7 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border Padding="8" Margin="0,2">
-                                    <Grid ColumnDefinitions="Auto,*,100,Auto">
+                                    <Grid ColumnDefinitions="Auto,*,150,Auto">
                                         <CheckBox Grid.Column="0" 
                                                  IsChecked="{Binding IsSelected, Mode=TwoWay}" />
                                         <TextBlock Grid.Column="1" 

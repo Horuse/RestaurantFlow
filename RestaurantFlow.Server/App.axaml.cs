@@ -74,6 +74,8 @@ public partial class App : Application
         services.AddScoped<RestaurantFlow.Server.Services.IInventoryService, RestaurantFlow.Server.Services.InventoryService>();
         services.AddScoped<RestaurantFlow.Server.Services.IStaffService, RestaurantFlow.Server.Services.StaffService>();
         services.AddSingleton<RestaurantFlow.Server.Services.ISignalRConnectionService, RestaurantFlow.Server.Services.SignalRConnectionService>();
+        services.AddScoped<RestaurantFlow.Server.Services.INotificationService, RestaurantFlow.Server.Services.NotificationService>();
+        services.AddSingleton<RestaurantFlow.Server.Services.IAudioNotificationService, RestaurantFlow.Server.Services.AudioNotificationService>();
         
         services.AddTransient<MainWindowViewModel>();
         services.AddTransient<KitchenViewModel>();

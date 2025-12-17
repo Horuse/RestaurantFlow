@@ -28,13 +28,14 @@
             <Grid RowDefinitions="Auto,*">
                 <TextBlock Grid.Row="0" Text="Інгредієнти" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,15"/>
                 
-                <DataGrid Grid.Row="1" 
-                         ItemsSource="{Binding Ingredients}" 
-                         SelectedItem="{Binding SelectedIngredient, Mode=TwoWay}"
-                         SelectionMode="Single" 
-                         IsReadOnly="True"
-                         GridLinesVisibility="Horizontal"
-                         HeadersVisibility="Column">
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <DataGrid ItemsSource="{Binding Ingredients}" 
+                             SelectedItem="{Binding SelectedIngredient, Mode=TwoWay}"
+                             SelectionMode="Single" 
+                             IsReadOnly="True"
+                             GridLinesVisibility="Horizontal"
+                             HeadersVisibility="Column"
+                             MinHeight="400">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Назва" Binding="{Binding Name}" Width="200"/>
                         <DataGridTextColumn Header="Одиниця" Binding="{Binding Unit}" Width="80"/>
@@ -57,7 +58,8 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
-                </DataGrid>
+                    </DataGrid>
+                </ScrollViewer>
             </Grid>
 
             

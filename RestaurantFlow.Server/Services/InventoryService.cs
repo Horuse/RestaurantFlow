@@ -6,16 +6,21 @@ using System.Threading.Tasks;
 using RestaurantFlow.Data;
 using RestaurantFlow.Data.Entities;
 using RestaurantFlow.Server.Repositories;
+using RestaurantFlow.Server.Hubs;
 
 namespace RestaurantFlow.Server.Services;
 
 public class InventoryService : IInventoryService
 {
     private readonly IInventoryRepository _inventoryRepository;
+    private readonly IRestaurantNotificationService? _restaurantNotificationService;
+    private readonly INotificationService? _notificationService;
     
-    public InventoryService(IInventoryRepository inventoryRepository)
+    public InventoryService(IInventoryRepository inventoryRepository, IRestaurantNotificationService? restaurantNotificationService = null, INotificationService? notificationService = null)
     {
         _inventoryRepository = inventoryRepository;
+        _restaurantNotificationService = restaurantNotificationService;
+        _notificationService = notificationService;
     }
     
     public async Task<List<Ingredient>> GetIngredientsAsync()
@@ -35,7 +40,14 @@ public class InventoryService : IInventoryService
     
     public async Task<Ingredient> UpdateIngredientStockAsync(int ingredientId, decimal quantity, string reason)
     {
-        return await _inventoryRepository.UpdateIngredientStockAsync(ingredientId, quantity, reason);
+        var result = await _inventoryRepository.UpdateIngredientStockAsync(ingredientId, quantity, reason);
+        
+        if (_restaurantNotificationService != null)
+            await _restaurantNotificationService.NotifyMenuUpdated();
+        else if (_notificationService != null)
+            await _notificationService.NotifyMenuUpdated();
+        
+        return result;
     }
     
     public async Task<List<InventoryLog>> GetInventoryLogsAsync(int? ingredientId = null)
@@ -50,11 +62,23 @@ public class InventoryService : IInventoryService
     
     public async Task<Ingredient> UpdateIngredientAsync(Ingredient ingredient)
     {
-        return await _inventoryRepository.UpdateAsync(ingredient);
+        var result = await _inventoryRepository.UpdateAsync(ingredient);
+        
+        if (_restaurantNotificationService != null)
+            await _restaurantNotificationService.NotifyMenuUpdated();
+        else if (_notificationService != null)
+            await _notificationService.NotifyMenuUpdated();
+            
+        return result;
     }
     
     public async Task DeleteIngredientAsync(int id)
     {
         await _inventoryRepository.SoftDeleteAsync(id);
+        
+        if (_restaurantNotificationService != null)
+            await _restaurantNotificationService.NotifyMenuUpdated();
+        else if (_notificationService != null)
+            await _notificationService.NotifyMenuUpdated();
     }
 }
