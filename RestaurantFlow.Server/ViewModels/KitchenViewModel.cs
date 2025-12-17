@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Linq;
 using System;
+using System.Reactive.Linq;
 using RestaurantFlow.Server.Services;
 using RestaurantFlow.Server.Models;
 using RestaurantFlow.Server.DTOs;
@@ -15,6 +16,7 @@ public partial class KitchenViewModel : ReactiveObject, IDisposable
 {
     private readonly IOrderService _orderService;
     private readonly ISignalRConnectionService _signalRService;
+    private readonly IDisposable? _reconnectTimer;
     
     [Reactive]
     private ObservableCollection<OrderCardViewModel> _pendingOrders = new();
@@ -39,8 +41,21 @@ public partial class KitchenViewModel : ReactiveObject, IDisposable
         _signalRService.NewOrderReceived += OnNewOrderReceived;
         _signalRService.OrderStatusChanged += OnOrderStatusChanged;
         
+        // Перевіряємо підключення кожні 30 секунд
+        _reconnectTimer = Observable.Timer(TimeSpan.Zero, TimeSpan.FromSeconds(30))
+            .Subscribe(async _ => await EnsureSignalRConnectionAsync());
+        
         _ = LoadOrdersAsync();
         _ = ConnectToSignalRAsync();
+    }
+    
+    private async Task EnsureSignalRConnectionAsync()
+    {
+        if (!_signalRService.IsConnected)
+        {
+            await ConnectToSignalRAsync();
+        }
+        IsSignalRConnected = _signalRService.IsConnected;
     }
 
     private async Task ConnectToSignalRAsync()
@@ -109,6 +124,11 @@ public partial class KitchenViewModel : ReactiveObject, IDisposable
         {
             var orders = await _orderService.GetActiveOrdersAsync();
             
+            foreach (var order in PendingOrders.Concat(InProgressOrders).Concat(ReadyOrders))
+            {
+                order.Dispose();
+            }
+            
             PendingOrders.Clear();
             InProgressOrders.Clear();
             ReadyOrders.Clear();
@@ -161,5 +181,11 @@ public partial class KitchenViewModel : ReactiveObject, IDisposable
     {
         _signalRService.NewOrderReceived -= OnNewOrderReceived;
         _signalRService.OrderStatusChanged -= OnOrderStatusChanged;
+        _reconnectTimer?.Dispose();
+        
+        foreach (var order in PendingOrders.Concat(InProgressOrders).Concat(ReadyOrders))
+        {
+            order.Dispose();
+        }
     }
 }

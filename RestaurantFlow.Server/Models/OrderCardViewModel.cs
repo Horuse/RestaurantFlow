@@ -3,23 +3,44 @@ using ReactiveUI.SourceGenerators;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Reactive.Linq;
 using RestaurantFlow.Data.Entities;
 using RestaurantFlow.Server.Services;
 using RestaurantFlow.Shared.Enums;
 
 namespace RestaurantFlow.Server.Models;
 
-public partial class OrderCardViewModel : ReactiveObject
+public partial class OrderCardViewModel : ReactiveObject, IDisposable
 {
     private readonly Order _order;
     private readonly IOrderService _orderService;
     private readonly Func<Task>? _onStatusChanged;
+    private readonly IDisposable? _timerSubscription;
+    
+    [Reactive]
+    private string _cookingTime = "";
     
     public OrderCardViewModel(Order order, IOrderService orderService, Func<Task>? onStatusChanged = null)
     {
         _order = order;
         _orderService = orderService;
         _onStatusChanged = onStatusChanged;
+        
+        // Оновлюємо час кожну хвилину
+        _timerSubscription = Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(1))
+            .Subscribe(_ => UpdateCookingTime());
+        
+        UpdateCookingTime();
+    }
+    
+    private void UpdateCookingTime()
+    {
+        if (_order.Status == OrderStatus.InProgress)
+        {
+            var startTime = _order.OrderItems.FirstOrDefault()?.StartedCookingAt ?? _order.CreatedAt;
+            var elapsed = DateTime.UtcNow - startTime;
+            CookingTime = $"Готується: {elapsed.Minutes} хв";
+        }
     }
     
     public int Id => _order.Id;
@@ -33,15 +54,6 @@ public partial class OrderCardViewModel : ReactiveObject
         _order.OrderItems.Select(oi => $"{oi.MenuItem.Name} x{oi.Quantity}"));
     
     public string CreatedTime => $"Замовлено: {_order.CreatedAt:HH:mm}";
-    
-    public string CookingTime
-    {
-        get
-        {
-            var elapsed = DateTime.UtcNow - _order.CreatedAt;
-            return $"Готується: {elapsed.Minutes} хв";
-        }
-    }
     
     public string ReadyTime => _order.OrderItems.FirstOrDefault()?.ReadyAt != null
         ? $"Готово: {_order.OrderItems.First().ReadyAt:HH:mm}"
@@ -85,5 +97,10 @@ public partial class OrderCardViewModel : ReactiveObject
         {
             await _onStatusChanged();
         }
+    }
+    
+    public void Dispose()
+    {
+        _timerSubscription?.Dispose();
     }
 }
