@@ -1,3 +1,5 @@
+using ReactiveUI;
+
 namespace RestaurantFlow.Client.Models;
 
 public class MenuItemModel
@@ -22,10 +24,21 @@ public class CategoryModel
     public int DisplayOrder { get; set; }
 }
 
-public class CartItemModel
+public class CartItemModel : ReactiveObject
 {
     public MenuItemModel MenuItem { get; set; } = new();
-    public int Quantity { get; set; }
+    
+    private int _quantity;
+    public int Quantity 
+    { 
+        get => _quantity; 
+        set 
+        { 
+            this.RaiseAndSetIfChanged(ref _quantity, value);
+            this.RaisePropertyChanged(nameof(TotalPrice));
+        }
+    }
+    
     public string? SpecialInstructions { get; set; }
     public decimal TotalPrice => MenuItem.Price * Quantity;
 }

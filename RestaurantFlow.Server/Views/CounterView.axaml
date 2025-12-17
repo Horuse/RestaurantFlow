@@ -45,19 +45,16 @@
                                                Width="150"/>
                             <DataGridTextColumn Header="Стіл" 
                                                Binding="{Binding TableInfo}" 
-                                               Width="80"/>
+                                               Width="120"/>
                             <DataGridTextColumn Header="Страви" 
                                                Binding="{Binding ItemsDescription}" 
                                                Width="*"
                                                MinWidth="200"/>
                             <DataGridTextColumn Header="Створено" 
                                                Binding="{Binding CreatedTime}" 
-                                               Width="120"/>
-                            <DataGridTextColumn Header="Готово" 
-                                               Binding="{Binding ReadyTime}" 
-                                               Width="120"/>
+                                               Width="180"/>
                             
-                            <DataGridTemplateColumn Header="Дії" Width="250">
+                            <DataGridTemplateColumn Header="Дії" Width="100">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">

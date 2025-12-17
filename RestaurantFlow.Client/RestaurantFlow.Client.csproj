@@ -43,5 +43,12 @@
     <Compile Update="Views\CartView.axaml.cs">
       <DependentUpon>CartView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\TableSetupView.axaml.cs">
+      <DependentUpon>TableSetupView.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Styles\Index.axaml" />
   </ItemGroup>
 </Project>

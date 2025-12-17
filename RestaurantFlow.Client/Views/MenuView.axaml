@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:RestaurantFlow.Client.ViewModels"
+             xmlns:shadui="clr-namespace:ShadUI;assembly=ShadUI"
              mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
              x:Class="RestaurantFlow.Client.Views.MenuView"
              x:DataType="vm:MainWindowViewModel">
@@ -12,7 +13,7 @@
     </Design.DataContext>
 
     <ScrollViewer>
-        <ItemsControl ItemsSource="{Binding FilteredMenuItems}" Margin="30,20">
+        <ItemsControl ItemsSource="{Binding FilteredMenuItems}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="4"/>
@@ -20,72 +21,51 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <!-- McDonald's Style Card -->
-                    <Border Background="White" 
-                            CornerRadius="20" 
-                            Margin="10"
-                            Padding="20">
-                        <Border.Effect>
-                            <DropShadowEffect BlurRadius="15" OffsetY="8" Opacity="0.1"/>
-                        </Border.Effect>
-                        <StackPanel Spacing="15">
-                            <!-- Item Image Placeholder -->
-                            <Border Background="#F5F5F5" 
-                                    Height="150" 
-                                    CornerRadius="15"
-                                    HorizontalAlignment="Stretch">
-                                <TextBlock Text="🍔" 
-                                           FontSize="60" 
-                                           HorizontalAlignment="Center" 
-                                           VerticalAlignment="Center"/>
-                            </Border>
-                            
-                            <!-- Item Info -->
+                    <shadui:Card
+                        HasShadow="True"
+                        Margin="10"
+                        >
+                        <shadui:Card.Header>
                             <StackPanel Spacing="8">
-                                <TextBlock Text="{Binding Name}" 
-                                           FontSize="18" 
-                                           FontWeight="Bold" 
-                                           TextWrapping="Wrap"
-                                           HorizontalAlignment="Center"/>
-                                
-                                <TextBlock Text="{Binding Description}" 
-                                           FontSize="12" 
-                                           Foreground="#666" 
-                                           TextWrapping="Wrap" 
-                                           MaxLines="3"
-                                           HorizontalAlignment="Center"
-                                           TextAlignment="Center"/>
-                                
-                                <!-- Price and Add Button -->
-                                <Grid ColumnDefinitions="*,Auto" Margin="0,10,0,0">
-                                    <TextBlock Grid.Column="0" 
-                                               Text="{Binding Price, StringFormat='₴{0:F2}'}" 
-                                               FontSize="20" 
-                                               FontWeight="Bold" 
-                                               Foreground="#DA291C"
+                                <!-- Item Image Placeholder -->
+                                <Border Background="#F5F5F5" 
+                                        Height="150" 
+                                        CornerRadius="8"
+                                        HorizontalAlignment="Stretch">
+                                    <TextBlock Text="🍔" 
+                                               FontSize="60" 
+                                               HorizontalAlignment="Center" 
                                                VerticalAlignment="Center"/>
-                                    
-                                    <Button Grid.Column="1" 
-                                            Background="#FFC72C" 
-                                            Foreground="#DA291C"
-                                            BorderThickness="0"
-                                            CornerRadius="20"
-                                            Padding="15,8"
-                                            FontWeight="Bold"
-                                            Content="Додати"
-                                            Command="{Binding $parent[UserControl].((vm:MainWindowViewModel)DataContext).AddToCartCommand}"
-                                            CommandParameter="{Binding}">
-                                        <Button.Styles>
-                                            <Style Selector="Button:pointerover">
-                                                <Setter Property="Background" Value="#DA291C"/>
-                                                <Setter Property="Foreground" Value="White"/>
-                                            </Style>
-                                        </Button.Styles>
-                                    </Button>
-                                </Grid>
+                                </Border>
+                                
+                                <shadui:CardTitle HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding Name}"/>
+                                </shadui:CardTitle>
+                                <shadui:CardDescription HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding Description}" TextWrapping="Wrap"/>
+                                </shadui:CardDescription>
                             </StackPanel>
-                        </StackPanel>
-                    </Border>
+                        </shadui:Card.Header>
+                        
+                        <shadui:Card.Footer>
+                            <DockPanel>
+                                <TextBlock 
+                                    Text="{Binding Price, StringFormat='₴{0:F2}'}" 
+                                    FontSize="18" 
+                                    FontWeight="Bold" 
+                                    Foreground="#DA291C"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"/>
+                                
+                                <Button 
+                                    Classes="Primary"
+                                    Content="Додати"
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding $parent[UserControl].((vm:MainWindowViewModel)DataContext).AddToCartCommand}"
+                                    CommandParameter="{Binding}"/>
+                            </DockPanel>
+                        </shadui:Card.Footer>
+                    </shadui:Card>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

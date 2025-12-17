@@ -16,7 +16,6 @@ public partial class MenuViewModel : ReactiveObject
     private readonly IMenuService _menuService;
     private readonly DialogManager _dialogManager;
     private readonly IServiceProvider _serviceProvider;
-    private readonly ISignalRConnectionService _signalRService;
     
     [Reactive]
     private ObservableCollection<MenuItem> _menuItems = new();
@@ -30,15 +29,11 @@ public partial class MenuViewModel : ReactiveObject
     [Reactive]
     private string _searchText = "";
 
-    public MenuViewModel(IMenuService menuService, DialogManager dialogManager, IServiceProvider serviceProvider, ISignalRConnectionService signalRService)
+    public MenuViewModel(IMenuService menuService, DialogManager dialogManager, IServiceProvider serviceProvider)
     {
         _menuService = menuService;
         _dialogManager = dialogManager;
         _serviceProvider = serviceProvider;
-        _signalRService = signalRService;
-        
-        // Підписуємося на оновлення меню
-        _signalRService.MenuUpdated += OnMenuUpdated;
         
         // Load data when ViewModel is created
         _ = LoadDataAsync();

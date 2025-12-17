@@ -1,0 +1,59 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:RestaurantFlow.Client.ViewModels"
+             xmlns:shadui="clr-namespace:ShadUI;assembly=ShadUI"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="RestaurantFlow.Client.Views.TableSetupView"
+             x:DataType="vm:TableSetupViewModel">
+
+    <Design.DataContext>
+        <vm:TableSetupViewModel/>
+    </Design.DataContext>
+
+    <Grid Background="#1A1A1A">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="1" HorizontalAlignment="Center" Spacing="30">
+            <shadui:Card HasShadow="True" MaxWidth="400" Padding="40">
+                <shadui:Card.Header>
+                    <StackPanel Spacing="16" HorizontalAlignment="Center">
+                        <shadui:CardTitle HorizontalAlignment="Center">
+                            <TextBlock Text="Налаштування столика" FontSize="24" FontWeight="Bold"/>
+                        </shadui:CardTitle>
+                        <shadui:CardDescription HorizontalAlignment="Center">
+                            <TextBlock Text="Введіть номер столика для початку роботи" TextAlignment="Center"/>
+                        </shadui:CardDescription>
+                    </StackPanel>
+                </shadui:Card.Header>
+                
+                <StackPanel Spacing="20" Margin="0,20">
+                    <TextBlock Text="Номер столика:" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding TableNumber}" 
+                             Width="120" 
+                             Height="50"
+                             FontSize="24"
+                             FontWeight="Bold"
+                             TextAlignment="Center"
+                             VerticalContentAlignment="Center"
+                             Watermark="1"
+                             HorizontalAlignment="Center"/>
+                </StackPanel>
+                
+                <shadui:Card.Footer>
+                    <Button Classes="Primary"
+                            Content="Підтвердити"
+                            Width="150"
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            Command="{Binding ConfirmCommand}"/>
+                </shadui:Card.Footer>
+            </shadui:Card>
+        </StackPanel>
+    </Grid>
+</UserControl>

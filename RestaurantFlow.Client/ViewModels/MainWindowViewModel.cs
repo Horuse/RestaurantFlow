@@ -44,6 +44,12 @@ public partial class MainWindowViewModel : ViewModelBase
     
     [Reactive]
     private bool _isOrderSuccessView = false;
+    
+    [Reactive]
+    private bool _isTableSetupView = true;
+    
+    [Reactive]
+    private bool _hasTableSetup = false;
 
     public CartService CartService { get; }
     
@@ -52,6 +58,8 @@ public partial class MainWindowViewModel : ViewModelBase
     public CartViewModel CartViewModel { get; }
     
     public OrderSuccessViewModel OrderSuccessViewModel { get; }
+    
+    public TableSetupViewModel TableSetupViewModel { get; }
 
     public MainWindowViewModel() : this(null!, null!)
     {
@@ -64,6 +72,9 @@ public partial class MainWindowViewModel : ViewModelBase
         
         CartViewModel = new CartViewModel(apiService, cartService);
         OrderSuccessViewModel = new OrderSuccessViewModel();
+        TableSetupViewModel = new TableSetupViewModel();
+        
+        TableSetupViewModel.TableConfirmed += OnTableConfirmed;
         
         CartViewModel.BackToMenuRequested += () => ShowMenuView();
         CartViewModel.OrderCompleted += orderNumber =>
@@ -179,6 +190,7 @@ public partial class MainWindowViewModel : ViewModelBase
         IsMenuView = true;
         IsCartView = false;
         IsOrderSuccessView = false;
+        IsTableSetupView = false;
     }
 
     private void ShowCartView()
@@ -186,6 +198,7 @@ public partial class MainWindowViewModel : ViewModelBase
         IsMenuView = false;
         IsCartView = true;
         IsOrderSuccessView = false;
+        IsTableSetupView = false;
     }
 
     private void ShowOrderSuccessView(string orderNumber)
@@ -193,7 +206,23 @@ public partial class MainWindowViewModel : ViewModelBase
         IsMenuView = false;
         IsCartView = false;
         IsOrderSuccessView = true;
+        IsTableSetupView = false;
         
         OrderSuccessViewModel.StartTimer(orderNumber);
+    }
+    
+    private void OnTableConfirmed(object? sender, string tableNumber)
+    {
+        TableNumber = int.Parse(tableNumber);
+        HasTableSetup = true;
+        ShowMenuView();
+    }
+    
+    private void ShowTableSetupView()
+    {
+        IsMenuView = false;
+        IsCartView = false;
+        IsOrderSuccessView = false;
+        IsTableSetupView = true;
     }
 }
