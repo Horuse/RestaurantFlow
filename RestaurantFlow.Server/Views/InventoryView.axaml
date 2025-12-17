@@ -14,7 +14,7 @@
             
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
                 <Button Content="Оновити" 
-                       Command="{Binding RefreshDataCommand}"
+                       Command="{Binding LoadDataCommand}"
                        Classes="Secondary"/>
                 <Button Content="Новий інгредієнт" 
                        Command="{Binding AddNewIngredientCommand}"
