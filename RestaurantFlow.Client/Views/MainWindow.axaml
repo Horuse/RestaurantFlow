@@ -72,18 +72,22 @@
                 </Button>
                 
                 <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10">
-                    <TextBlock Text="🍔 McDonald's" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"
-                               IsVisible="{Binding IsMenuView}"/>
-                    <TextBox Text="{Binding SearchText}" 
-                             Watermark="Пошук страв..." 
-                             FontSize="14"
-                             Width="300"
-                             Padding="10,8"
-                             CornerRadius="20"
-                             BorderThickness="0"
-                             Background="White"
-                             Foreground="#333"
-                             IsVisible="{Binding IsMenuView}"/>
+                    <!-- Menu View: Title and Search in horizontal layout -->
+                    <StackPanel Orientation="Horizontal" Spacing="20" HorizontalAlignment="Center"
+                               IsVisible="{Binding IsMenuView}">
+                        <TextBlock Text="RestaurantFlow" FontSize="24" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding SearchText}" 
+                                 Watermark="Пошук страв..." 
+                                 FontSize="14"
+                                 Width="300"
+                                 Padding="10,8"
+                                 CornerRadius="20"
+                                 BorderThickness="0"
+                                 Background="White"
+                                 Foreground="#333"
+                                 VerticalAlignment="Center"/>
+                    </StackPanel>
+                    
                     <TextBlock Text="🛒 Ваш кошик" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"
                                IsVisible="{Binding IsCartView}"/>
                     <TextBlock Text="{Binding CartService.TotalItems, StringFormat='{}{0} товарів'}" 

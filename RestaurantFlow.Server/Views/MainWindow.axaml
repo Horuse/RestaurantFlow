@@ -87,60 +87,30 @@
                     Content="Кухня"
                     Command="{Binding NavigateToCommand}"
                     CommandParameter="Kitchen">
-                    <shadui:SidebarItem.Icon>
-                        <TextBlock 
-                            Classes="LucideIcon"
-                            Text="👨‍🍳"
-                            FontSize="16"/>
-                    </shadui:SidebarItem.Icon>
                 </shadui:SidebarItem>
 
                 <shadui:SidebarItem 
                     Content="Касса"
                     Command="{Binding NavigateToCommand}"
                     CommandParameter="Counter">
-                    <shadui:SidebarItem.Icon>
-                        <TextBlock 
-                            Classes="LucideIcon"
-                            Text="🔔"
-                            FontSize="16"/>
-                    </shadui:SidebarItem.Icon>
                 </shadui:SidebarItem>
 
                 <shadui:SidebarItem 
                     Content="Меню"
                     Command="{Binding NavigateToCommand}"
                     CommandParameter="Menu">
-                    <shadui:SidebarItem.Icon>
-                        <TextBlock 
-                            Classes="LucideIcon"
-                            Text="📋"
-                            FontSize="16"/>
-                    </shadui:SidebarItem.Icon>
                 </shadui:SidebarItem>
 
                 <shadui:SidebarItem 
                     Content="Склад"
                     Command="{Binding NavigateToCommand}"
                     CommandParameter="Inventory">
-                    <shadui:SidebarItem.Icon>
-                        <TextBlock 
-                            Classes="LucideIcon"
-                            Text="📦"
-                            FontSize="16"/>
-                    </shadui:SidebarItem.Icon>
                 </shadui:SidebarItem>
 
                 <shadui:SidebarItem 
                     Content="Аналітика"
                     Command="{Binding NavigateToCommand}"
                     CommandParameter="Analytics">
-                    <shadui:SidebarItem.Icon>
-                        <TextBlock 
-                            Classes="LucideIcon"
-                            Text="📊"
-                            FontSize="16"/>
-                    </shadui:SidebarItem.Icon>
                 </shadui:SidebarItem>
             </StackPanel>
         </shadui:Sidebar>

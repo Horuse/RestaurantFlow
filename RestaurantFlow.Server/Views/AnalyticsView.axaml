@@ -1,28 +1,249 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:RestaurantFlow.Server.ViewModels"
+             xmlns:shadui="clr-namespace:ShadUI;assembly=ShadUI"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
              x:Class="RestaurantFlow.Server.Views.AnalyticsView"
              x:DataType="vm:AnalyticsViewModel">
 
-    <Grid>
-        <Border CornerRadius="10" Margin="20" Padding="30">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="📊" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,20"/>
-                <TextBlock Text="Аналітика продажів" 
-                          FontSize="24" 
-                          FontWeight="Bold" 
-                          HorizontalAlignment="Center"
-                          Margin="0,0,0,10"/>
-                <TextBlock Text="Звіти та статистика ресторану" 
-                          FontSize="16" 
-                          Foreground="#666666"
-                          HorizontalAlignment="Center"/>
-                <Button Content="🔄 Оновити дані"
-                       Command="{Binding RefreshAnalyticsCommand}"
-                       Classes="btn btn-primary"
-                       HorizontalAlignment="Center"
-                       Margin="0,20,0,0"/>
-            </StackPanel>
-        </Border>
-    </Grid>
+    <Design.DataContext>
+        <vm:AnalyticsViewModel/>
+    </Design.DataContext>
+
+    <ScrollViewer>
+        <StackPanel Spacing="24" Margin="24">
+            
+            <!-- Header з датою та оновленням -->
+            <Grid ColumnDefinitions="* Auto Auto">
+                <StackPanel Grid.Column="0">
+                    <TextBlock Classes="h2" Text="Аналітика та Метрики"/>
+                    <TextBlock Classes="p Muted" Text="Огляд продуктивності ресторану"/>
+                </StackPanel>
+                
+                <CalendarDatePicker Grid.Column="1" 
+                                   SelectedDate="{Binding SelectedDate}"
+                                   Margin="0,0,12,0"
+                                   Width="200"/>
+                
+                <Button Grid.Column="2" 
+                        Classes="Primary" 
+                        Command="{Binding RefreshAnalyticsCommand}"
+                        shadui:ButtonAssist.ShowProgress="{Binding IsLoading}"
+                        Content="Оновити"/>
+            </Grid>
+
+            <!-- Основні метрики -->
+            <shadui:Card HasShadow="True">
+                <shadui:Card.Header>
+                    <shadui:CardTitle>Ключові Показники</shadui:CardTitle>
+                </shadui:Card.Header>
+                
+                <ItemsControl ItemsSource="{Binding MainMetrics}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="3" ColumnSpacing="16" RowSpacing="16"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <shadui:Card Classes="Outline" Padding="20">
+                                <StackPanel Spacing="8">
+                                    <TextBlock Classes="Small" 
+                                              Text="{Binding Title}" 
+                                              Foreground="{DynamicResource MutedColor}"/>
+                                    
+                                    <TextBlock Classes="h3" 
+                                              Text="{Binding Value}"
+                                              FontWeight="Bold"/>
+                                    
+                                    <TextBlock Classes="Caption Muted" 
+                                              Text="{Binding Subtitle}"/>
+                                </StackPanel>
+                            </shadui:Card>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </shadui:Card>
+
+            <!-- Популярні страви -->
+            <Grid ColumnDefinitions="* *" ColumnSpacing="24">
+                
+                <!-- Популярні страви сьогодні -->
+                <shadui:Card Grid.Column="0" HasShadow="True">
+                    <shadui:Card.Header>
+                        <StackPanel>
+                            <shadui:CardTitle>Популярні страви сьогодні</shadui:CardTitle>
+                            <shadui:CardDescription>Топ-5 найбільш замовлюваних страв</shadui:CardDescription>
+                        </StackPanel>
+                    </shadui:Card.Header>
+                    
+                    <StackPanel Spacing="8">
+                        <ItemsControl ItemsSource="{Binding TopSellingItems}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{DynamicResource BorderColor}" 
+                                           BorderThickness="0,0,0,1" 
+                                           Padding="0,8">
+                                        <Grid ColumnDefinitions="* Auto Auto">
+                                            <TextBlock Grid.Column="0" 
+                                                      Text="{Binding ItemName}" 
+                                                      Classes="Small"
+                                                      VerticalAlignment="Center"/>
+                                            
+                                            <StackPanel Grid.Column="1" 
+                                                       Orientation="Horizontal" 
+                                                       Spacing="4"
+                                                       VerticalAlignment="Center"
+                                                       Margin="8,0">
+                                                <TextBlock Text="Кількість:" FontSize="10"/>
+                                                <TextBlock Text="{Binding Quantity}" 
+                                                          Classes="Caption Muted"/>
+                                            </StackPanel>
+                                            
+                                            <TextBlock Grid.Column="2" 
+                                                      Text="{Binding Revenue, StringFormat='₴{0:F2}'}" 
+                                                      Classes="Small"
+                                                      FontWeight="Medium"
+                                                      VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        
+                        <TextBlock Text="Немає даних для відображення" 
+                                  Classes="Caption Muted"
+                                  HorizontalAlignment="Center"
+                                  Margin="0,16"
+                                  IsVisible="{Binding !TopSellingItems.Count}"/>
+                    </StackPanel>
+                </shadui:Card>
+
+                <!-- Популярні страви за тиждень -->
+                <shadui:Card Grid.Column="1" HasShadow="True">
+                    <shadui:Card.Header>
+                        <StackPanel>
+                            <shadui:CardTitle>Популярні страви за тиждень</shadui:CardTitle>
+                            <shadui:CardDescription>Топ-5 найбільш замовлюваних страв за останні 7 днів</shadui:CardDescription>
+                        </StackPanel>
+                    </shadui:Card.Header>
+                    
+                    <StackPanel Spacing="8">
+                        <ItemsControl ItemsSource="{Binding TopSellingItemsWeek}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{DynamicResource BorderColor}" 
+                                           BorderThickness="0,0,0,1" 
+                                           Padding="0,8">
+                                        <Grid ColumnDefinitions="* Auto Auto">
+                                            <TextBlock Grid.Column="0" 
+                                                      Text="{Binding ItemName}" 
+                                                      Classes="Small"
+                                                      VerticalAlignment="Center"/>
+                                            
+                                            <StackPanel Grid.Column="1" 
+                                                       Orientation="Horizontal" 
+                                                       Spacing="4"
+                                                       VerticalAlignment="Center"
+                                                       Margin="8,0">
+                                                <TextBlock Text="Кількість:" FontSize="10"/>
+                                                <TextBlock Text="{Binding Quantity}" 
+                                                          Classes="Caption Muted"/>
+                                            </StackPanel>
+                                            
+                                            <TextBlock Grid.Column="2" 
+                                                      Text="{Binding Revenue, StringFormat='₴{0:F2}'}" 
+                                                      Classes="Small"
+                                                      FontWeight="Medium"
+                                                      VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        
+                        <TextBlock Text="Немає даних для відображення" 
+                                  Classes="Caption Muted"
+                                  HorizontalAlignment="Center"
+                                  Margin="0,16"
+                                  IsVisible="{Binding !TopSellingItemsWeek.Count}"/>
+                    </StackPanel>
+                </shadui:Card>
+            </Grid>
+
+            <!-- Погодинна статистика -->
+            <shadui:Card HasShadow="True">
+                <shadui:Card.Header>
+                    <StackPanel>
+                        <shadui:CardTitle>Погодинна статистика замовлень</shadui:CardTitle>
+                        <shadui:CardDescription>Розподіл замовлень протягом дня</shadui:CardDescription>
+                    </StackPanel>
+                </shadui:Card.Header>
+                
+                <StackPanel>
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                        <DataGrid ItemsSource="{Binding HourlyOrderData}"
+                                 CanUserReorderColumns="False"
+                                 CanUserSortColumns="True"
+                                 SelectionMode="Single"
+                                 GridLinesVisibility="Horizontal"
+                                 HeadersVisibility="Column"
+                                 IsReadOnly="True"
+                                 Margin="0,8">
+                            
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Година" 
+                                                  Binding="{Binding HourDisplay}" 
+                                                  Width="100"
+                                                  IsReadOnly="True"/>
+                                
+                                <DataGridTextColumn Header="Кількість замовлень" 
+                                                  Binding="{Binding OrderCount}" 
+                                                  Width="150"
+                                                  IsReadOnly="True"/>
+                                
+                                <DataGridTextColumn Header="Дохід" 
+                                                  Binding="{Binding Revenue, StringFormat='₴{0:F2}'}" 
+                                                  Width="*"
+                                                  IsReadOnly="True"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </ScrollViewer>
+                    
+                    <TextBlock Text="Немає даних для відображення" 
+                              Classes="Caption Muted"
+                              HorizontalAlignment="Center"
+                              Margin="0,32"
+                              IsVisible="{Binding !HourlyOrderData.Count}"/>
+                </StackPanel>
+            </shadui:Card>
+
+            <!-- Navigation shortcuts -->
+            <shadui:Card HasShadow="True">
+                <shadui:Card.Header>
+                    <shadui:CardTitle>Швидкі дії</shadui:CardTitle>
+                </shadui:Card.Header>
+                
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <Button Classes="Outline"
+                            Command="{Binding PreviousDayCommand}">
+                        <TextBlock Text="Попередній день"/>
+                    </Button>
+                    
+                    <Button Classes="Secondary"
+                            Command="{Binding TodayCommand}">
+                        <TextBlock Text="Сьогодні"/>
+                    </Button>
+                    
+                    <Button Classes="Outline"
+                            Command="{Binding NextDayCommand}">
+                        <TextBlock Text="Наступний день"/>
+                    </Button>
+                </StackPanel>
+            </shadui:Card>
+
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>
