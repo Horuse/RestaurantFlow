@@ -13,11 +13,13 @@ public partial class OrderCardViewModel : ReactiveObject
 {
     private readonly Order _order;
     private readonly IOrderService _orderService;
+    private readonly Func<Task>? _onStatusChanged;
     
-    public OrderCardViewModel(Order order, IOrderService orderService)
+    public OrderCardViewModel(Order order, IOrderService orderService, Func<Task>? onStatusChanged = null)
     {
         _order = order;
         _orderService = orderService;
+        _onStatusChanged = onStatusChanged;
     }
     
     public int Id => _order.Id;
@@ -59,17 +61,29 @@ public partial class OrderCardViewModel : ReactiveObject
     private async Task StartCooking()
     {
         await _orderService.UpdateOrderStatusAsync(_order.Id, OrderStatus.InProgress);
+        if (_onStatusChanged != null)
+        {
+            await _onStatusChanged();
+        }
     }
     
     [ReactiveCommand]
     private async Task MarkReady()
     {
         await _orderService.UpdateOrderStatusAsync(_order.Id, OrderStatus.Ready);
+        if (_onStatusChanged != null)
+        {
+            await _onStatusChanged();
+        }
     }
     
     [ReactiveCommand]
     private async Task MarkCompleted()
     {
         await _orderService.UpdateOrderStatusAsync(_order.Id, OrderStatus.Completed);
+        if (_onStatusChanged != null)
+        {
+            await _onStatusChanged();
+        }
     }
 }

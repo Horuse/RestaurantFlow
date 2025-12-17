@@ -84,7 +84,7 @@ public partial class KitchenViewModel : ReactiveObject, IDisposable
             }).ToList()
         };
 
-        var orderCard = new OrderCardViewModel(orderEntity, _orderService);
+        var orderCard = new OrderCardViewModel(orderEntity, _orderService, LoadOrdersAsync);
         
         await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -115,7 +115,7 @@ public partial class KitchenViewModel : ReactiveObject, IDisposable
             
             foreach (var order in orders)
             {
-                var orderCard = new OrderCardViewModel(order, _orderService);
+                var orderCard = new OrderCardViewModel(order, _orderService, LoadOrdersAsync);
                 
                 switch (order.Status)
                 {
